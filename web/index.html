@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiskDB: Parallel SIMD Options Risk Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-left">
+            <div class="logo-icon">⚡</div>
+            <div>
+                <h1>RiskDB <span class="badge-tag">HPC ENGINE</span></h1>
+                <p class="subtitle">In-Memory Parallel Vectorized Query Engine (OpenMP & SIMD over PostgreSQL)</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="status-pill active" id="engineStatusPill">
+                <span class="status-dot"></span>
+                <span id="engineStatusText">Engine Connected (Port 8080)</span>
+            </div>
+            <div class="simd-pill" id="simdPill">SIMD: AVX2 / NEON</div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <!-- Control Strip -->
+        <section class="controls-card">
+            <div class="control-group">
+                <label for="archSelect">Execution Architecture</label>
+                <select id="archSelect">
+                    <option value="both" selected>Side-by-Side Dual-VM Comparison</option>
+                    <option value="riskdb">VM 2: RiskDB Engine (SIMD + OpenMP)</option>
+                    <option value="traditional">VM 1: Traditional Stack (PostgreSQL Client)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="threadSlider">Worker Threads (OpenMP): <span id="threadVal">8</span></label>
+                <input type="range" id="threadSlider" min="1" max="16" value="8" step="1">
+            </div>
+
+            <div class="control-group">
+                <label for="portfolioFilter">Filter Portfolio</label>
+                <input type="text" id="portfolioFilter" placeholder="e.g. 5 (or leave blank for all)">
+            </div>
+
+            <div class="control-actions">
+                <button id="runBtn" class="btn btn-primary">
+                    <span class="btn-icon">▶</span> Recalculate Risk
+                </button>
+                <button id="benchmarkBtn" class="btn btn-secondary">
+                    <span class="btn-icon">📊</span> Run Scaling Benchmark
+                </button>
+            </div>
+        </section>
+
+        <!-- KPI Cards -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-label">TOTAL EVALUATED CONTRACTS</span>
+                <span class="kpi-value" id="kpiContracts">--</span>
+                <span class="kpi-sub" id="kpiContractsSub">100 Portfolios</span>
+            </div>
+            <div class="kpi-card highlight">
+                <span class="kpi-label">TOTAL PORTFOLIO VALUE</span>
+                <span class="kpi-value" id="kpiValue">--</span>
+                <span class="kpi-sub">Mark-to-Market USD</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">NET PORTFOLIO DELTA (Δ)</span>
+                <span class="kpi-value" id="kpiDelta">--</span>
+                <span class="kpi-sub">Directional Sensitivity</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">NET PORTFOLIO GAMMA (Γ)</span>
+                <span class="kpi-value" id="kpiGamma">--</span>
+                <span class="kpi-sub">Curvature / 2nd Derivative</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">NET PORTFOLIO VEGA (ν)</span>
+                <span class="kpi-value" id="kpiVega">--</span>
+                <span class="kpi-sub">Volatility Exposure</span>
+            </div>
+        </section>
+
+        <!-- Comparison Banner -->
+        <section class="comparison-card" id="comparisonCard">
+            <div class="comp-header">
+                <h3>Architectural Performance Comparison (VM 1 Traditional vs VM 2 RiskDB)</h3>
+                <span class="speedup-badge" id="speedupBadge">--x FASTER</span>
+            </div>
+
+            <div class="comp-metrics-grid">
+                <div class="comp-column traditional">
+                    <div class="column-title">
+                        <span class="dot trad-dot"></span> VM 1: Traditional PostgreSQL Stack
+                    </div>
+                    <div class="metric-row">
+                        <span>Network Transfer:</span>
+                        <strong id="tradNetworkTime">-- ms</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Compute Time:</span>
+                        <strong id="tradComputeTime">-- ms</strong>
+                    </div>
+                    <div class="metric-row highlight-row">
+                        <span>End-to-End Latency:</span>
+                        <strong id="tradTotalTime">-- ms</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Throughput:</span>
+                        <strong id="tradThroughput">-- M/sec</strong>
+                    </div>
+                </div>
+
+                <div class="comp-column riskdb">
+                    <div class="column-title">
+                        <span class="dot risk-dot"></span> VM 2: RiskDB Parallel SIMD Engine
+                    </div>
+                    <div class="metric-row">
+                        <span>Zero-Copy Ingestion:</span>
+                        <strong>0.00 ms (In-Memory)</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Vector Compute + Reduction:</span>
+                        <strong id="riskComputeTime">-- ms</strong>
+                    </div>
+                    <div class="metric-row highlight-row">
+                        <span>End-to-End Latency:</span>
+                        <strong id="riskTotalTime" class="text-accent">-- ms</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Throughput:</span>
+                        <strong id="riskThroughput" class="text-accent">-- M/sec</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Latency Bar -->
+            <div class="latency-bar-container">
+                <div class="latency-label-bar">
+                    <span>Latency Comparison Visualizer</span>
+                    <span id="latencyDeltaText">RiskDB delivers immediate answers</span>
+                </div>
+                <div class="bar-visual">
+                    <div class="bar-fill trad-fill" id="tradBar" style="width: 100%;">Traditional</div>
+                    <div class="bar-fill risk-fill" id="riskBar" style="width: 5%;">RiskDB</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benchmark Modal / Section -->
+        <section class="benchmark-panel" id="benchmarkPanel" style="display: none;">
+            <h3>Academic Strong Scaling Evaluation (Amdahl's Law)</h3>
+            <div class="table-responsive">
+                <table class="data-table" id="scalingTable">
+                    <thead>
+                        <tr>
+                            <th>Threads (T)</th>
+                            <th>Execution Time</th>
+                            <th>Speedup S(T)</th>
+                            <th>Parallel Efficiency E(T)</th>
+                            <th>Throughput</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scalingTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Portfolios Table Section -->
+        <section class="table-card">
+            <div class="table-header-controls">
+                <h3>Active Portfolios Risk Exposures</h3>
+                <span class="table-count" id="tableCountBadge">100 Portfolios</span>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Portfolio ID</th>
+                            <th>Contracts</th>
+                            <th>Total Value ($)</th>
+                            <th>Net Delta (Δ)</th>
+                            <th>Net Gamma (Γ)</th>
+                            <th>Net Vega (ν)</th>
+                            <th>Risk Tier</th>
+                        </tr>
+                    </thead>
+                    <tbody id="portfoliosTableBody">
+                        <tr><td colspan="7" class="text-center">Click "Recalculate Risk" to fetch live data.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>RiskDB Systems Engineering Project | Strict HPC & Parallel Computing Architecture | C++17 • AVX2 / ARM NEON • OpenMP • PostgreSQL</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

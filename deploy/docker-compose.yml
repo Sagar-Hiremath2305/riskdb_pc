@@ -1,0 +1,43 @@
+services:
+  # VM 1: Traditional Architecture Database
+  postgres-vm1:
+    image: postgres:16-alpine
+    container_name: postgres-vm1
+    environment:
+      POSTGRES_USER: riskdb_user
+      POSTGRES_PASSWORD: riskdb_password
+      POSTGRES_DB: riskdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./vm1_traditional/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - vm_network
+
+  # VM 1: Traditional Tiered Application (External client compute)
+  traditional-app-vm1:
+    build:
+      context: ..
+      dockerfile: deploy/vm1_traditional/Dockerfile
+    container_name: traditional-app-vm1
+    depends_on:
+      - postgres-vm1
+    command: ["--host", "postgres-vm1", "--port", "5432", "--dbname", "riskdb", "--user", "riskdb_user", "--password", "riskdb_password", "--rows", "1000000"]
+    networks:
+      - vm_network
+
+  # VM 2: RiskDB Accelerated Parallel Query Engine over PostgreSQL
+  riskdb-engine-vm2:
+    build:
+      context: ..
+      dockerfile: deploy/vm2_riskdb/Dockerfile
+    container_name: riskdb-engine-vm2
+    depends_on:
+      - postgres-vm1
+    command: ["--host", "postgres-vm1", "--port", "5432", "--dbname", "riskdb", "--user", "riskdb_user", "--password", "riskdb_password", "--threads", "8", "--rows", "1000000"]
+    networks:
+      - vm_network
+
+networks:
+  vm_network:
+    driver: bridge

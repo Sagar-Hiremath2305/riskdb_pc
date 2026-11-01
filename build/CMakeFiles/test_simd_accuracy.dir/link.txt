@@ -1,0 +1,1 @@
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/opt/ruby/lib CMakeFiles/test_simd_accuracy.dir/tests/test_simd_accuracy.cpp.o -o test_simd_accuracy  libriskdb_core.a /opt/homebrew/opt/libomp/lib/libomp.dylib /opt/homebrew/lib/libpq.dylib
