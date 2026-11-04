@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/tests/test_columnar_pivot.cpp" "CMakeFiles/test_columnar_pivot.dir/tests/test_columnar_pivot.cpp.o" "gcc" "CMakeFiles/test_columnar_pivot.dir/tests/test_columnar_pivot.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/tests/test_columnar_pivot.cpp" "CMakeFiles/test_columnar_pivot.dir/tests/test_columnar_pivot.cpp.o" "gcc" "CMakeFiles/test_columnar_pivot.dir/tests/test_columnar_pivot.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

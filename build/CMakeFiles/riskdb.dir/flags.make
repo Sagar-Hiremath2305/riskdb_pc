@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/sagar/Desktop/projects/riskDB/riskdb/include -I/opt/homebrew/include -I/opt/homebrew/opt/libomp/include
+CXX_INCLUDES = -I/Users/sagar/Desktop/projects/riskDB/riskdb_pc/include -I/opt/homebrew/include -I/opt/homebrew/opt/libomp/include
 
 CXX_FLAGSarm64 = -std=c++17 -arch arm64 -O3 -march=native -ffast-math -Wall -Wextra -Wno-unused-parameter -Xpreprocessor -fopenmp
 

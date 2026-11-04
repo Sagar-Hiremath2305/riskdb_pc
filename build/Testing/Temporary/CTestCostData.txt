@@ -1,4 +1,4 @@
-TestSIMDAccuracy 2 0.310833
-TestReductionTree 2 0.182235
-TestColumnarPivot 2 0.150472
+TestSIMDAccuracy 9 0.00257166
+TestReductionTree 9 0.00248922
+TestColumnarPivot 9 0.00143675
 ---

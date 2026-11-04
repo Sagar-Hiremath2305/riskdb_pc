@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/apps/riskdb_app/main.cpp" "CMakeFiles/riskdb_app.dir/apps/riskdb_app/main.cpp.o" "gcc" "CMakeFiles/riskdb_app.dir/apps/riskdb_app/main.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/apps/riskdb_app/main.cpp" "CMakeFiles/riskdb_app.dir/apps/riskdb_app/main.cpp.o" "gcc" "CMakeFiles/riskdb_app.dir/apps/riskdb_app/main.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

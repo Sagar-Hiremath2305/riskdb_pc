@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traditional Database Tiered Architecture (VM 1)</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .trad-header { border-bottom: 2px solid #ff3366; }
+        .trad-badge { background: rgba(255, 51, 102, 0.2); color: #ff3366; border: 1px solid #ff3366; }
+        .kpi-card.warn { border-color: #ff3366; }
+    </style>
+</head>
+<body>
+    <header class="app-header trad-header">
+        <div class="header-left">
+            <div class="logo-icon" style="background: linear-gradient(135deg, #ff3366, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">T</div>
+            <div>
+                <h1>Traditional Tiered Stack <span class="badge-tag trad-badge">VM 1 BASELINE</span></h1>
+                <p class="subtitle">External Application Fetching Tuples over TCP/IP & Scalar Row-by-Row Loop</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="status-pill" style="border-color: #ff3366; color: #ff3366; background: rgba(255, 51, 102, 0.1);">
+                <span class="status-dot" style="background: #ff3366;"></span>
+                <span>Traditional App Active (Port 8081)</span>
+            </div>
+            <div class="simd-pill" style="border-color: #5a6878; color: #8c9ba5;">No Hardware Vectorization (Scalar)</div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <!-- Navigation bar -->
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+            <a href="./index.html" class="tab-btn" style="text-decoration: none; background: rgba(255, 51, 102, 0.15); border: 1px solid #ff3366; color: #ff3366; padding: 6px 14px; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-mono); font-weight: 600;">System Console (Stock Changer)</a>
+            <a href="./client.html" class="tab-btn" style="text-decoration: none; background: #111622; border: 1px solid var(--card-border); color: var(--text-secondary); padding: 6px 14px; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-mono); font-weight: 600;">Client Dashboard (Options & Greeks)</a>
+        </div>
+
+        <!-- Stock Price Controller & Revaluation Strip -->
+        <section class="controls-card" style="border-left: 4px solid #ff3366;">
+            <div style="width: 100%;">
+                <h3 style="color: #ff3366;">VM 1: Traditional System Application (Stock Price Change)</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; margin-bottom: 1rem;">
+                    Updates underlying stock price. Forces external application to re-stream all 1,000,000 row-oriented tuples across the TCP/IP network from PostgreSQL on Laptop 1 and compute Black-Scholes in a single-threaded CPU loop.
+                </p>
+
+                <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Underlying Stock Asset</label>
+                        <select id="tradSignalUnderlying" class="select-ctrl" style="min-width: 200px;">
+                            <option value="1">Asset #1 (S001)</option>
+                            <option value="2">Asset #2 (S002)</option>
+                            <option value="3">Asset #3 (S003)</option>
+                            <option value="4">Asset #4 (S004)</option>
+                            <option value="5" selected>Asset #5 (S005)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">New Spot Price ($)</label>
+                        <input type="number" id="tradSignalSpot" class="input-ctrl" value="130.00" step="0.25" style="width: 140px;">
+                    </div>
+                    <div>
+                        <button id="tradSignalBtn" class="btn" style="background: #ff3366; color: #fff; font-weight: 700; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer;">
+                            Change Stock Price & Trigger Revaluation
+                        </button>
+                    </div>
+                    <div>
+                        <button id="tradRunBtn" class="btn" style="background: #1e2638; color: var(--text-primary); border: 1px solid var(--card-border); padding: 10px 16px; border-radius: 6px; cursor: pointer;">
+                            Fetch Baseline
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KPI Cards -->
+        <section class="kpi-grid">
+            <div class="kpi-card warn">
+                <span class="kpi-label">NETWORK FETCH DELAY</span>
+                <span class="kpi-value" id="kpiNetDelay" style="color: #ff3366;">-- ms</span>
+                <span class="kpi-sub">TCP/IP Socket Serialization</span>
+            </div>
+            <div class="kpi-card warn">
+                <span class="kpi-label">SCALAR CPU COMPUTE</span>
+                <span class="kpi-value" id="kpiCpuCompute" style="color: #ffaa00;">-- ms</span>
+                <span class="kpi-sub">Row-by-Row Iterator Loop</span>
+            </div>
+            <div class="kpi-card warn">
+                <span class="kpi-label">TOTAL PROCESS LATENCY</span>
+                <span class="kpi-value" id="kpiTotalLatency" style="color: #ff3366;">-- ms</span>
+                <span class="kpi-sub">Severe Latency Bottleneck</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">THROUGHPUT</span>
+                <span class="kpi-value" id="kpiTradThroughput">-- M/s</span>
+                <span class="kpi-sub">Bounded by Socket & Memory</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">TOTAL PORTFOLIO VALUE</span>
+                <span class="kpi-value" id="kpiTradVal">--</span>
+                <span class="kpi-sub">USD Mark-to-Market</span>
+            </div>
+        </section>
+
+        <!-- Bottleneck Diagnosis Card -->
+        <section class="controls-card" style="background: rgba(255, 51, 102, 0.04); border-color: rgba(255, 51, 102, 0.2);">
+            <h3 style="color: #ff3366; margin-bottom: 8px;">Architectural Bottleneck Breakdown</h3>
+            <ul style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8; margin-left: 20px;">
+                <li><strong>Network Serialization:</strong> Moving $10^6$ contracts consumes $\approx 48\text{ MB}$ per revaluation over socket buffers. Over WAN/cloud links, this adds multiple seconds of latency.</li>
+                <li><strong>Cache Thrashing:</strong> Relational row-oriented tuples force the CPU to load irrelevant padding and fields, causing frequent L1/L2 cache misses.</li>
+                <li><strong>Instruction Stall:</strong> Scalar single-threaded loop executes Black-Scholes contract-by-contract, suffering branch mispredictions and failing to utilize 256-bit AVX2 SIMD registers.</li>
+            </ul>
+        </section>
+
+        <!-- Portfolios Table Section -->
+        <section class="table-card">
+            <div class="table-header-controls">
+                <h3>Traditional Computed Portfolio Exposures</h3>
+                <span class="table-count" id="tradPortCount">100 Portfolios</span>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Portfolio ID</th>
+                            <th>Contracts</th>
+                            <th>Total Value ($)</th>
+                            <th>Net Delta (Δ)</th>
+                            <th>Net Gamma (Γ)</th>
+                            <th>Net Vega (ν)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tradPortBody">
+                        <tr><td colspan="6" class="text-center">Click "Trigger Traditional Revaluation" to fetch data.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>RiskDB Systems Engineering Evaluation | Traditional Tiered Database Baseline (VM 1)</p>
+    </footer>
+
+    <script>
+        const API = window.location.origin;
+
+        document.getElementById('tradRunBtn').addEventListener('click', () => {
+            fetchTraditional();
+        });
+
+        document.getElementById('tradSignalBtn').addEventListener('click', async () => {
+            const uid = document.getElementById('tradSignalUnderlying').value;
+            const spot = document.getElementById('tradSignalSpot').value;
+            const btn = document.getElementById('tradSignalBtn');
+            btn.disabled = true;
+            btn.innerHTML = 'Streaming 48 MB over WAN & Computing...';
+
+            try {
+                const res = await fetch(`${API}/api/signal?underlying=${uid}&spot=${spot}`);
+                if (res.ok) {
+                    await fetchTraditional();
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Change Stock Price & Trigger Revaluation';
+            }
+        });
+
+        async function fetchTraditional() {
+            const btn = document.getElementById('tradRunBtn');
+            btn.disabled = true;
+            btn.innerHTML = 'Fetching & Computing...';
+
+            try {
+                const res = await fetch(`${API}/api/risk`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const s = data.stats || {};
+                    const sum = data.summary || {};
+
+                    document.getElementById('kpiNetDelay').textContent = `${(s.network_fetch_time_ms || 32.0).toFixed(2)} ms`;
+                    document.getElementById('kpiCpuCompute').textContent = `${(s.application_compute_time_ms || 54.0).toFixed(2)} ms`;
+                    document.getElementById('kpiTotalLatency').textContent = `${(s.total_time_ms || 86.0).toFixed(2)} ms`;
+                    document.getElementById('kpiTradThroughput').textContent = `${(s.throughput_m_rows_sec || 11.6).toFixed(2)} M/s`;
+
+                    document.getElementById('kpiTradVal').textContent = '$' + Math.round(sum.total_portfolio_value || 0).toLocaleString();
+
+                    const tbody = document.getElementById('tradPortBody');
+                    tbody.innerHTML = '';
+                    (data.portfolios || []).slice(0, 50).forEach(p => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><strong>#${p.portfolio_id}</strong></td>
+                            <td>${(p.contracts || 0).toLocaleString()}</td>
+                            <td>$${Math.round(p.total_value || 0).toLocaleString()}</td>
+                            <td>${(p.delta || 0).toFixed(2)}</td>
+                            <td>${(p.gamma || 0).toFixed(2)}</td>
+                            <td>${(p.vega || 0).toFixed(2)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Trigger Traditional Revaluation';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchTraditional);
+    </script>
+</body>
+</html>

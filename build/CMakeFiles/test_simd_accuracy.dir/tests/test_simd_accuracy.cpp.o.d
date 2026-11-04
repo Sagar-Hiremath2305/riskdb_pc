@@ -1,6 +1,6 @@
 CMakeFiles/test_simd_accuracy.dir/tests/test_simd_accuracy.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/tests/test_simd_accuracy.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/tests/test_simd_accuracy.cpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -829,12 +829,12 @@ CMakeFiles/test_simd_accuracy.dir/tests/test_simd_accuracy.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/assert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_assert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_static_assert.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/columnar/columnar_table.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/types.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/alignment.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/simd/simd_black_scholes.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/math_utils.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/storage/data_generator.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/columnar/columnar_table.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/types.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/alignment.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/simd/simd_black_scholes.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/math_utils.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/storage/data_generator.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/random \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/bernoulli_distribution.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/uniform_real_distribution.h \

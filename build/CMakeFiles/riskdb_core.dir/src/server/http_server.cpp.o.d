@@ -1,7 +1,7 @@
 CMakeFiles/riskdb_core.dir/src/server/http_server.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/src/server/http_server.cpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/server/http_server.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/server/http_server.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/server/http_server.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/max.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h \

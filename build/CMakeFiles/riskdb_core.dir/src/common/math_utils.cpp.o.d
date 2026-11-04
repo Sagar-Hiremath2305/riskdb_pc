@@ -1,7 +1,7 @@
 CMakeFiles/riskdb_core.dir/src/common/math_utils.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/src/common/math_utils.cpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/math_utils.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/common/math_utils.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/math_utils.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cmath \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -158,7 +158,7 @@ CMakeFiles/riskdb_core.dir/src/common/math_utils.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__math/remainder.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__math/rounding_functions.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__math/trigonometric_functions.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/types.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/types.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/string \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/max.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h \
@@ -786,4 +786,4 @@ CMakeFiles/riskdb_core.dir/src/common/math_utils.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wbuffer_convert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wstring_convert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdarg \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/alignment.hpp
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/alignment.hpp

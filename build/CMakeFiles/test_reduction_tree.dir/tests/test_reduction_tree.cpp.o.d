@@ -1,6 +1,6 @@
 CMakeFiles/test_reduction_tree.dir/tests/test_reduction_tree.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/tests/test_reduction_tree.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/tests/test_reduction_tree.cpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -829,8 +829,8 @@ CMakeFiles/test_reduction_tree.dir/tests/test_reduction_tree.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/assert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_assert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_static_assert.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/engine/local_accumulator.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/alignment.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/types.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/engine/reduction_tree.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/engine/local_accumulator.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/alignment.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/types.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/engine/reduction_tree.hpp \
   /opt/homebrew/opt/libomp/include/omp.h

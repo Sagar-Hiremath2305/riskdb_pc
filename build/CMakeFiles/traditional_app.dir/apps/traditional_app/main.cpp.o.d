@@ -1,6 +1,6 @@
 CMakeFiles/traditional_app.dir/apps/traditional_app/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/apps/traditional_app/main.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/apps/traditional_app/main.cpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -833,11 +833,11 @@ CMakeFiles/traditional_app.dir/apps/traditional_app/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/thread \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/this_thread.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/thread.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/storage/postgres_connector.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/columnar/columnar_table.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/types.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/alignment.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/storage/data_generator.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/storage/postgres_connector.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/columnar/columnar_table.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/types.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/alignment.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/storage/data_generator.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/random \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/bernoulli_distribution.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/uniform_real_distribution.h \
@@ -890,8 +890,8 @@ CMakeFiles/traditional_app.dir/apps/traditional_app/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/student_t_distribution.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/uniform_random_bit_generator.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/weibull_distribution.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/math_utils.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/server/http_server.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/math_utils.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/server/http_server.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/map \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tree \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__utility/lazy_synth_three_way_comparator.h

@@ -138,6 +138,10 @@ HttpRequest HttpServer::parse_request(const std::string& raw) {
         }
     }
 
+    // Read body
+    std::string body_content((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+    req.body = body_content;
+
     return req;
 }
 

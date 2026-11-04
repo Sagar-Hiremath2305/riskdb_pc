@@ -57,10 +57,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/sagar/Desktop/projects/riskDB/riskdb
+CMAKE_SOURCE_DIR = /Users/sagar/Desktop/projects/riskDB/riskdb_pc
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/sagar/Desktop/projects/riskDB/riskdb/build
+CMAKE_BINARY_DIR = /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -97,9 +97,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles /Users/sagar/Desktop/projects/riskDB/riskdb/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -179,6 +179,19 @@ riskdb_app/fast:
 .PHONY : riskdb_app/fast
 
 #=============================================================================
+# Target rules for targets named riskdb_computation_app
+
+# Build rule for target.
+riskdb_computation_app: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 riskdb_computation_app
+.PHONY : riskdb_computation_app
+
+# fast build rule for target.
+riskdb_computation_app/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_computation_app.dir/build.make CMakeFiles/riskdb_computation_app.dir/build
+.PHONY : riskdb_computation_app/fast
+
+#=============================================================================
 # Target rules for targets named test_simd_accuracy
 
 # Build rule for target.
@@ -240,6 +253,30 @@ apps/riskdb_app/main.s: apps/riskdb_app/main.cpp.s
 apps/riskdb_app/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_app.dir/build.make CMakeFiles/riskdb_app.dir/apps/riskdb_app/main.cpp.s
 .PHONY : apps/riskdb_app/main.cpp.s
+
+apps/riskdb_computation_app/main.o: apps/riskdb_computation_app/main.cpp.o
+.PHONY : apps/riskdb_computation_app/main.o
+
+# target to build an object file
+apps/riskdb_computation_app/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_computation_app.dir/build.make CMakeFiles/riskdb_computation_app.dir/apps/riskdb_computation_app/main.cpp.o
+.PHONY : apps/riskdb_computation_app/main.cpp.o
+
+apps/riskdb_computation_app/main.i: apps/riskdb_computation_app/main.cpp.i
+.PHONY : apps/riskdb_computation_app/main.i
+
+# target to preprocess a source file
+apps/riskdb_computation_app/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_computation_app.dir/build.make CMakeFiles/riskdb_computation_app.dir/apps/riskdb_computation_app/main.cpp.i
+.PHONY : apps/riskdb_computation_app/main.cpp.i
+
+apps/riskdb_computation_app/main.s: apps/riskdb_computation_app/main.cpp.s
+.PHONY : apps/riskdb_computation_app/main.s
+
+# target to generate assembly for a file
+apps/riskdb_computation_app/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_computation_app.dir/build.make CMakeFiles/riskdb_computation_app.dir/apps/riskdb_computation_app/main.cpp.s
+.PHONY : apps/riskdb_computation_app/main.cpp.s
 
 apps/traditional_app/main.o: apps/traditional_app/main.cpp.o
 .PHONY : apps/traditional_app/main.o
@@ -588,6 +625,7 @@ help:
 	@echo "... test"
 	@echo "... riskdb"
 	@echo "... riskdb_app"
+	@echo "... riskdb_computation_app"
 	@echo "... riskdb_core"
 	@echo "... test_columnar_pivot"
 	@echo "... test_reduction_tree"
@@ -596,6 +634,9 @@ help:
 	@echo "... apps/riskdb_app/main.o"
 	@echo "... apps/riskdb_app/main.i"
 	@echo "... apps/riskdb_app/main.s"
+	@echo "... apps/riskdb_computation_app/main.o"
+	@echo "... apps/riskdb_computation_app/main.i"
+	@echo "... apps/riskdb_computation_app/main.s"
 	@echo "... apps/traditional_app/main.o"
 	@echo "... apps/traditional_app/main.i"
 	@echo "... apps/traditional_app/main.s"

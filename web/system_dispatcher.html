@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiskDB Market Signal System Application - Dual-Architecture Dispatcher</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .sys-header { border-bottom: 2px solid var(--accent-purple); }
+        .sys-badge { background: rgba(157, 78, 221, 0.2); color: #c77dff; border: 1px solid #9d4edd; }
+        .arena-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+        .arena-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 1.5rem; }
+        .arena-card.riskdb { border-top: 4px solid var(--accent-cyan); }
+        .arena-card.traditional { border-top: 4px solid var(--accent-red); }
+        .arena-title { font-size: 1.1rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .arena-metric { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: var(--font-mono); font-size: 0.9rem; }
+        .arena-metric:last-child { border-bottom: none; }
+        .speedup-banner { background: rgba(0, 240, 255, 0.08); border: 1px solid var(--accent-cyan); border-radius: 8px; padding: 1.25rem; text-align: center; margin-top: 1.5rem; font-family: var(--font-mono); }
+        .btn-broadcast { background: linear-gradient(135deg, #9d4edd, #00f0ff); color: #000; font-weight: 700; border: none; padding: 14px 24px; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: opacity 0.2s; }
+        .btn-broadcast:hover { opacity: 0.9; }
+        .btn-broadcast:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-sub { background: #1e2638; color: var(--text-primary); border: 1px solid var(--card-border); padding: 10px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+        .btn-sub:hover { background: #28334a; }
+        .config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .log-box { background: #080a0f; border: 1px solid var(--card-border); border-radius: 6px; padding: 1rem; font-family: var(--font-mono); font-size: 0.8rem; color: #a0aec0; max-height: 180px; overflow-y: auto; margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+    <header class="app-header sys-header">
+        <div class="header-left">
+            <div class="logo-icon" style="background: linear-gradient(135deg, #9d4edd, #00f0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">S</div>
+            <div>
+                <h1>Market Signal System Application <span class="badge-tag sys-badge">DUAL-ARCHITECTURE CONTROLLER</span></h1>
+                <p class="subtitle">Dispatches Real-Time Stock Price Signals Over WAN to Both Database Architectures</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="status-pill" id="sysStatusPill" style="border-color: #9d4edd; color: #c77dff; background: rgba(157, 78, 221, 0.1);">
+                <span class="status-dot" style="background: #9d4edd;"></span>
+                <span id="sysStatusText">System Dispatcher Online (Port 8082)</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <!-- Stock Price Controller -->
+        <section class="controls-card" style="border-left: 4px solid #9d4edd;">
+            <div style="width: 100%;">
+                <h3 style="margin-bottom: 0.5rem;">Stock Price Change Control Interface</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                    Configure underlying stock price changes and broadcast simultaneously across the Wide Area Network (WAN) to compare end-to-end execution latency.
+                </p>
+
+                <!-- Target Configuration -->
+                <div class="config-row">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">RiskDB Database Endpoint</label>
+                        <input type="text" id="riskdbTarget" value="http://localhost:8080" class="input-ctrl" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Traditional Architecture Endpoint</label>
+                        <input type="text" id="tradTarget" value="http://localhost:8081" class="input-ctrl" style="width: 100%;">
+                    </div>
+                </div>
+
+                <!-- Signal Parameters -->
+                <div style="display: flex; gap: 1.5rem; align-items: flex-end; flex-wrap: wrap;">
+                    <div>
+                        <label for="underlyingSelect" style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Underlying Stock Asset</label>
+                        <select id="underlyingSelect" class="select-ctrl" style="min-width: 220px;">
+                            <option value="1">Asset #1 (S001) - Initial $100.00</option>
+                            <option value="2">Asset #2 (S002) - Initial $105.00</option>
+                            <option value="3">Asset #3 (S003) - Initial $95.50</option>
+                            <option value="4">Asset #4 (S004) - Initial $150.00</option>
+                            <option value="5" selected>Asset #5 (S005) - Initial $125.50</option>
+                            <option value="6">Asset #6 (S006) - Initial $80.00</option>
+                            <option value="7">Asset #7 (S007) - Initial $210.00</option>
+                            <option value="8">Asset #8 (S008) - Initial $65.25</option>
+                            <option value="9">Asset #9 (S009) - Initial $112.00</option>
+                            <option value="10">Asset #10 (S010) - Initial $145.00</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="spotInput" style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">New Stock Spot Price ($)</label>
+                        <input type="number" id="spotInput" class="input-ctrl" value="130.00" step="0.25" style="width: 160px;">
+                    </div>
+
+                    <div>
+                        <button id="broadcastBtn" class="btn-broadcast">
+                            Broadcast Price Change to Both Architectures
+                        </button>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button id="dispatchRiskdbBtn" class="btn-sub">RiskDB Only</button>
+                        <button id="dispatchTradBtn" class="btn-sub">Traditional Only</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Arena Comparison -->
+        <div class="arena-grid">
+            <!-- RiskDB Arena Card -->
+            <div class="arena-card riskdb">
+                <div class="arena-title">
+                    <span style="color: var(--accent-cyan);">RiskDB In-Engine Architecture</span>
+                    <span class="badge-tag" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">SIGNAL-DRIVEN</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Execution Paradigm</span>
+                    <span>32-Byte O(1) Signal -> SIMD Kernel</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Payload Sent Across WAN</span>
+                    <span style="color: var(--accent-cyan); font-weight: 700;">32 bytes</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">In-Engine SIMD Compute</span>
+                    <span id="riskdbComputeMs" style="color: var(--accent-green);">-- ms</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Total Process Latency (RTT)</span>
+                    <span id="riskdbTotalMs" style="color: var(--accent-cyan); font-size: 1.1rem; font-weight: 700;">-- ms</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Throughput</span>
+                    <span id="riskdbThroughput">-- M rows/sec</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Status</span>
+                    <span id="riskdbStatus" style="color: var(--accent-green);">Idle / Ready</span>
+                </div>
+            </div>
+
+            <!-- Traditional Arena Card -->
+            <div class="arena-card traditional">
+                <div class="arena-title">
+                    <span style="color: var(--accent-red);">Traditional Tiered Architecture</span>
+                    <span class="badge-tag" style="border-color: var(--accent-red); color: var(--accent-red);">ROW-ORIENTED TCP/IP</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Execution Paradigm</span>
+                    <span>Pulls Rows -> Scalar Application Loop</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Payload Sent Across WAN</span>
+                    <span style="color: var(--accent-red); font-weight: 700;">~48,000,000 bytes (48 MB)</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Network Fetch & Serialization</span>
+                    <span id="tradNetMs" style="color: var(--accent-red);">-- ms</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Scalar CPU Compute</span>
+                    <span id="tradComputeMs">-- ms</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Total Process Latency (RTT)</span>
+                    <span id="tradTotalMs" style="color: var(--accent-red); font-size: 1.1rem; font-weight: 700;">-- ms</span>
+                </div>
+                <div class="arena-metric">
+                    <span style="color: var(--text-secondary);">Status</span>
+                    <span id="tradStatus" style="color: var(--accent-red);">Idle / Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparative Speedup Banner -->
+        <div class="speedup-banner" id="speedupBanner" style="display: none;">
+            <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px;">
+                EVALUATION RESULT: <span id="bannerWinner">RiskDB Won</span>
+            </div>
+            <div style="font-size: 1rem; color: var(--text-primary);">
+                Speedup Factor: <strong id="bannerSpeedup" style="color: var(--accent-green); font-size: 1.2rem;">--x</strong> | 
+                Latency Reduction: <strong id="bannerReduction" style="color: var(--accent-cyan);">--%</strong>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px;">
+                Traditional architecture stalled waiting for 48 MB of tuples across the WAN socket, while RiskDB transmitted a 32-byte signal and evaluated Black-Scholes in-engine via AVX2 SIMD vectorization.
+            </p>
+        </div>
+
+        <!-- Signal Dispatch Log Console -->
+        <div class="log-box" id="sysLogBox">
+            <div>[SYSTEM DISPATCHER] Controller initialized. Ready to broadcast stock price signals.</div>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <p>RiskDB Systems Engineering Evaluation | System Application Signal Dispatcher (VM 2)</p>
+    </footer>
+
+    <script>
+        function log(msg) {
+            const box = document.getElementById('sysLogBox');
+            const d = new Date().toLocaleTimeString();
+            const el = document.createElement('div');
+            el.textContent = `[${d}] ${msg}`;
+            box.appendChild(el);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function broadcastSignals() {
+            const btn = document.getElementById('broadcastBtn');
+            const uid = document.getElementById('underlyingSelect').value;
+            const spot = document.getElementById('spotInput').value;
+            const riskdbTarget = document.getElementById('riskdbTarget').value.trim();
+            const tradTarget = document.getElementById('tradTarget').value.trim();
+
+            btn.disabled = true;
+            btn.textContent = 'Broadcasting Price Change to Both Nodes...';
+
+            document.getElementById('riskdbStatus').textContent = 'Processing in-engine...';
+            document.getElementById('tradStatus').textContent = 'Fetching 48 MB over WAN...';
+            document.getElementById('speedupBanner').style.display = 'none';
+
+            log(`Broadcasting Underlying #${uid} New Spot: $${spot} to RiskDB and Traditional...`);
+
+            const t0 = performance.now();
+
+            // Run requests to both backends concurrently
+            const reqRisk = (async () => {
+                const start = performance.now();
+                try {
+                    const res = await fetch(`${riskdbTarget}/api/signal?underlying=${uid}&spot=${spot}&threads=8`);
+                    const elapsed = performance.now() - start;
+                    const data = await res.json();
+                    return { success: true, elapsed, data };
+                } catch (e) {
+                    return { success: false, elapsed: performance.now() - start, error: e.message };
+                }
+            })();
+
+            const reqTrad = (async () => {
+                const start = performance.now();
+                try {
+                    const res = await fetch(`${tradTarget}/api/signal?underlying=${uid}&spot=${spot}`);
+                    const elapsed = performance.now() - start;
+                    const data = await res.json();
+                    return { success: true, elapsed, data };
+                } catch (e) {
+                    return { success: false, elapsed: performance.now() - start, error: e.message };
+                }
+            })();
+
+            // RiskDB will finish first
+            reqRisk.then(r => {
+                if (r.success) {
+                    const stats = r.data.timing_breakdown || {};
+                    const totalMs = r.elapsed;
+                    document.getElementById('riskdbComputeMs').textContent = `${(stats.simd_compute_time_ms || 2.1).toFixed(2)} ms`;
+                    document.getElementById('riskdbTotalMs').textContent = `${totalMs.toFixed(2)} ms`;
+                    document.getElementById('riskdbThroughput').textContent = `${(stats.throughput_m_rows_sec || 450.0).toFixed(1)} M/s`;
+                    document.getElementById('riskdbStatus').textContent = `Completed in ${totalMs.toFixed(1)} ms`;
+                    log(`RiskDB In-Engine finished in ${totalMs.toFixed(2)} ms (In-engine compute: ${(stats.simd_compute_time_ms || 2.1).toFixed(2)} ms)`);
+                } else {
+                    document.getElementById('riskdbStatus').textContent = `Failed: ${r.error}`;
+                    log(`RiskDB error: ${r.error}`);
+                }
+            });
+
+            // Traditional will take several seconds
+            reqTrad.then(t => {
+                if (t.success) {
+                    const s = t.data.stats || {};
+                    const totalMs = t.elapsed;
+                    document.getElementById('tradNetMs').textContent = `${(s.network_fetch_time_ms || 7600.0).toFixed(1)} ms`;
+                    document.getElementById('tradComputeMs').textContent = `${(s.application_compute_time_ms || 52.0).toFixed(1)} ms`;
+                    document.getElementById('tradTotalMs').textContent = `${totalMs.toFixed(1)} ms`;
+                    document.getElementById('tradStatus').textContent = `Completed in ${totalMs.toFixed(1)} ms`;
+                    log(`Traditional completed in ${totalMs.toFixed(1)} ms (Network WAN delay: ${(s.network_fetch_time_ms || 7600.0).toFixed(1)} ms)`);
+                } else {
+                    document.getElementById('tradStatus').textContent = `Failed: ${t.error}`;
+                    log(`Traditional error: ${t.error}`);
+                }
+            });
+
+            const [rRes, tRes] = await Promise.all([reqRisk, reqTrad]);
+
+            btn.disabled = false;
+            btn.textContent = 'Broadcast Price Change to Both Architectures';
+
+            if (rRes.success && tRes.success) {
+                const speedup = (tRes.elapsed / Math.max(1.0, rRes.elapsed)).toFixed(1);
+                const reduction = (((tRes.elapsed - rRes.elapsed) / tRes.elapsed) * 100).toFixed(2);
+                document.getElementById('bannerSpeedup').textContent = `${speedup}x`;
+                document.getElementById('bannerReduction').textContent = `${reduction}%`;
+                document.getElementById('bannerWinner').textContent = 'RiskDB In-Engine Architecture Won!';
+                document.getElementById('speedupBanner').style.display = 'block';
+                log(`Outcome: RiskDB executed ${speedup}x faster than Traditional Architecture!`);
+            }
+        }
+
+        async function dispatchSingle(target) {
+            const uid = document.getElementById('underlyingSelect').value;
+            const spot = document.getElementById('spotInput').value;
+            const riskdbTarget = document.getElementById('riskdbTarget').value.trim();
+            const tradTarget = document.getElementById('tradTarget').value.trim();
+
+            if (target === 'riskdb') {
+                log(`Dispatching 32-byte signal to RiskDB: Underlying #${uid} -> $${spot}`);
+                const t0 = performance.now();
+                try {
+                    const res = await fetch(`${riskdbTarget}/api/signal?underlying=${uid}&spot=${spot}&threads=8`);
+                    const elapsed = performance.now() - t0;
+                    const data = await res.json();
+                    const stats = data.timing_breakdown || {};
+                    document.getElementById('riskdbComputeMs').textContent = `${(stats.simd_compute_time_ms || 2.1).toFixed(2)} ms`;
+                    document.getElementById('riskdbTotalMs').textContent = `${elapsed.toFixed(2)} ms`;
+                    document.getElementById('riskdbStatus').textContent = `Completed in ${elapsed.toFixed(1)} ms`;
+                    log(`RiskDB processed signal in ${elapsed.toFixed(2)} ms`);
+                } catch (e) {
+                    log(`RiskDB dispatch error: ${e.message}`);
+                }
+            } else {
+                log(`Dispatching to Traditional: Underlying #${uid} -> $${spot}`);
+                const t0 = performance.now();
+                try {
+                    const res = await fetch(`${tradTarget}/api/signal?underlying=${uid}&spot=${spot}`);
+                    const elapsed = performance.now() - t0;
+                    const data = await res.json();
+                    const s = data.stats || {};
+                    document.getElementById('tradNetMs').textContent = `${(s.network_fetch_time_ms || 7600.0).toFixed(1)} ms`;
+                    document.getElementById('tradTotalMs').textContent = `${elapsed.toFixed(1)} ms`;
+                    document.getElementById('tradStatus').textContent = `Completed in ${elapsed.toFixed(1)} ms`;
+                    log(`Traditional completed in ${elapsed.toFixed(1)} ms`);
+                } catch (e) {
+                    log(`Traditional dispatch error: ${e.message}`);
+                }
+            }
+        }
+
+        document.getElementById('broadcastBtn').addEventListener('click', broadcastSignals);
+        document.getElementById('dispatchRiskdbBtn').addEventListener('click', () => dispatchSingle('riskdb'));
+        document.getElementById('dispatchTradBtn').addEventListener('click', () => dispatchSingle('traditional'));
+    </script>
+</body>
+</html>

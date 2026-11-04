@@ -1,7 +1,7 @@
 CMakeFiles/riskdb_core.dir/src/storage/data_generator.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/src/storage/data_generator.cpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/storage/data_generator.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/storage/data_generator.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/storage/data_generator.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -860,9 +860,9 @@ CMakeFiles/riskdb_core.dir/src/storage/data_generator.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/student_t_distribution.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/uniform_random_bit_generator.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/weibull_distribution.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/types.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/alignment.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/columnar/columnar_table.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/types.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/alignment.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/columnar/columnar_table.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip \

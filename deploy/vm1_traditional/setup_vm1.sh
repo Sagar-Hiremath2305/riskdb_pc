@@ -7,36 +7,24 @@ echo "======================================================================"
 
 # 1. Install prerequisites (Ubuntu/Debian)
 sudo apt-get update -y
-sudo apt-get install -y build-essential cmake libpq-dev postgresql postgresql-contrib libomp-dev
+sudo apt-get install -y build-essential cmake libpq-dev postgresql-client libomp-dev
 
-# 2. Configure PostgreSQL
-sudo systemctl enable postgresql
-sudo systemctl start postgresql
-
-sudo -u postgres psql -c "CREATE USER riskdb_user WITH PASSWORD 'riskdb_password' SUPERUSER;" || true
-sudo -u postgres psql -c "CREATE DATABASE riskdb OWNER riskdb_user;" || true
-
-# Allow external connection from VM 2
-PG_CONF=$(sudo -u postgres psql -t -P format=unaligned -c "SHOW config_file;")
-PG_HBA=$(sudo -u postgres psql -t -P format=unaligned -c "SHOW hba_file;")
-
-echo "listen_addresses = '*'" | sudo tee -a "$PG_CONF"
-echo "host    all             all             0.0.0.0/0               md5" | sudo tee -a "$PG_HBA"
-sudo systemctl restart postgresql
-
-# 3. Initialize Schema
-sudo -u postgres psql -d riskdb -f init.sql
-
-# 4. Build Traditional App
+# 2. Build Traditional Application
 mkdir -p build && cd build
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --target traditional_app riskdb -j$(nproc)
-
-echo "[+] Seeding database with 1,000,000 options contracts..."
-./riskdb --generate-csv /tmp/contracts.csv 1000000
-sudo -u postgres psql -d riskdb -c "\copy contracts FROM '/tmp/contracts.csv' WITH (FORMAT csv, HEADER true);"
+cd ..
 
 echo "======================================================================"
 echo "[+] VM 1 Provisioning Complete."
-echo "    Run Traditional App: ./build/traditional_app --host localhost --dbname riskdb --user riskdb_user --password riskdb_password"
+echo ""
+echo "Step A (From Laptop 1): Laptop 1 opens reverse SSH tunnel:"
+echo "   ssh -N -R 5432:localhost:5432 <AZURE_USER>@<VM1_PUBLIC_IP>"
+echo ""
+echo "Step B (On VM 1): Launch Application 1 connecting to Laptop 1's PostgreSQL:"
+echo "   ./build/traditional_app --host 127.0.0.1 --pg-port 5432 --dbname riskdb --user postgres --password postgres --port 8081"
+echo ""
+echo "Step C (From Laptop 2): Presenter views Traditional Dashboard:"
+echo "   http://<VM1_PUBLIC_IP>:8081"
 echo "======================================================================"
+

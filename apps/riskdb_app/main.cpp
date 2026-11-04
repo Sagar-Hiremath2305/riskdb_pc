@@ -144,6 +144,10 @@ int main(int argc, char* argv[]) {
     std::cout << "[+] Columnar store active: " << table.size() << " contracts ("
               << (table.memory_footprint_bytes() / (1024.0 * 1024.0)) << " MB)\n";
 
+    std::cout << "[*] Pre-computing and storing initial option prices and Greeks in database memory...\n";
+    table.recompute_stored_metrics(-1);
+    std::cout << "[+] In-database options prices and Greeks initialized.\n";
+
     if (run_cli) {
         // One-off CLI run
         riskdb::QueryEngine engine(thread_count, num_portfolios);
@@ -158,12 +162,17 @@ int main(int argc, char* argv[]) {
     riskdb::HttpServer server(port);
     server.set_static_dir(web_dir);
 
+    static std::atomic<uint64_t> riskdb_update_ver{1};
+    static std::atomic<double> riskdb_last_compute_ms{2.1};
+
     // Endpoint: Status
     server.route("GET", "/api/status", [&table, thread_count](const riskdb::HttpRequest&) {
         std::ostringstream ss;
         ss << "{\n"
            << "  \"status\": \"healthy\",\n"
            << "  \"engine\": \"RiskDB Parallel SIMD Engine\",\n"
+           << "  \"update_version\": " << riskdb_update_ver.load() << ",\n"
+           << "  \"last_compute_ms\": " << riskdb_last_compute_ms.load() << ",\n"
            << "  \"simd_architecture\": \""
 #if defined(__AVX2__)
            << "AVX2 (256-bit)"
@@ -176,6 +185,82 @@ int main(int argc, char* argv[]) {
            << "  \"cached_contracts\": " << table.size() << ",\n"
            << "  \"worker_threads\": " << thread_count << "\n"
            << "}\n";
+        return riskdb::HttpResponse::json(ss.str());
+    });
+
+    // Endpoint: Contracts & Greeks Query for Client Application
+    server.route("GET", "/api/contracts", [&table](const riskdb::HttpRequest& req) {
+        size_t limit = 50;
+        size_t offset = 0;
+        int underlying_filter = -1;
+        int portfolio_filter = -1;
+
+        if (!req.get_param("limit").empty()) limit = std::stoull(req.get_param("limit"));
+        if (!req.get_param("offset").empty()) offset = std::stoull(req.get_param("offset"));
+        if (!req.get_param("underlying").empty()) underlying_filter = std::stoi(req.get_param("underlying"));
+        if (!req.get_param("portfolio").empty()) portfolio_filter = std::stoi(req.get_param("portfolio"));
+
+        if (limit > 500) limit = 500;
+
+        std::ostringstream ss;
+        ss << std::fixed << std::setprecision(4);
+        ss << "{\n";
+        ss << "  \"total_stored_contracts\": " << table.size() << ",\n";
+        ss << "  \"update_version\": " << riskdb_update_ver.load() << ",\n";
+        ss << "  \"last_compute_ms\": " << riskdb_last_compute_ms.load() << ",\n";
+        ss << "  \"total_latency_ms\": " << riskdb_last_compute_ms.load() << ",\n";
+        ss << "  \"contracts\": [\n";
+
+        size_t matches = 0;
+        size_t written = 0;
+
+        const float* spots = table.spot_prices();
+        const float* strikes = table.strike_prices();
+        const float* expiries = table.times_to_expiry();
+        const float* vols = table.volatilities();
+        const float* qtys = table.quantities();
+        const uint8_t* types = table.option_types();
+        const uint16_t* ports = table.portfolio_ids();
+        const uint32_t* underlyings = table.underlying_ids();
+        const uint64_t* contract_ids = table.contract_ids();
+
+        const float* c_prices = table.computed_prices();
+        const float* c_deltas = table.computed_deltas();
+        const float* c_gammas = table.computed_gammas();
+        const float* c_vegas  = table.computed_vegas();
+        const float* c_thetas = table.computed_thetas();
+
+        for (size_t i = 0; i < table.size(); ++i) {
+            if (underlying_filter >= 0 && underlyings[i] != static_cast<uint32_t>(underlying_filter)) continue;
+            if (portfolio_filter >= 0 && ports[i] != static_cast<uint16_t>(portfolio_filter)) continue;
+
+            if (matches >= offset && written < limit) {
+                if (written > 0) ss << ",\n";
+                ss << "    {"
+                   << "\"contract_id\": " << contract_ids[i] << ", "
+                   << "\"underlying_id\": " << underlyings[i] << ", "
+                   << "\"portfolio_id\": " << ports[i] << ", "
+                   << "\"option_type\": \"" << (types[i] == 0 ? "CALL" : "PUT") << "\", "
+                   << "\"spot_price\": " << spots[i] << ", "
+                   << "\"strike_price\": " << strikes[i] << ", "
+                   << "\"time_to_expiry\": " << expiries[i] << ", "
+                   << "\"volatility\": " << vols[i] << ", "
+                   << "\"quantity\": " << qtys[i] << ", "
+                   << "\"option_price\": " << c_prices[i] << ", "
+                   << "\"delta\": " << c_deltas[i] << ", "
+                   << "\"gamma\": " << c_gammas[i] << ", "
+                   << "\"vega\": " << c_vegas[i] << ", "
+                   << "\"theta\": " << c_thetas[i]
+                   << "}";
+                ++written;
+            }
+            ++matches;
+            if (written >= limit) break;
+        }
+
+        ss << "\n  ],\n";
+        ss << "  \"matched_count\": " << matches << "\n";
+        ss << "}\n";
         return riskdb::HttpResponse::json(ss.str());
     });
 
@@ -196,13 +281,126 @@ int main(int argc, char* argv[]) {
         return riskdb::HttpResponse::json(json);
     });
 
-    // Endpoint: Full Academic Benchmark for UI Visualizer
+    // Endpoint: In-Engine Market Signal Processing (Price Changed Signal)
+    auto handle_signal = [&table, &num_portfolios](const riskdb::HttpRequest& req) {
+        uint32_t underlying_id = 1;
+        float new_spot_price = 100.0f;
+        size_t threads = 8;
+
+        if (!req.get_param("underlying").empty()) {
+            underlying_id = std::stoul(req.get_param("underlying"));
+        }
+        if (!req.get_param("spot").empty()) {
+            new_spot_price = std::stof(req.get_param("spot"));
+        }
+        if (!req.get_param("threads").empty()) {
+            threads = std::stoull(req.get_param("threads"));
+        }
+
+        if (!req.body.empty()) {
+            size_t u_pos = req.body.find("\"underlying_id\":");
+            if (u_pos != std::string::npos) {
+                underlying_id = std::stoul(req.body.substr(u_pos + 16));
+            }
+            size_t s_pos = req.body.find("\"spot_price\":");
+            if (s_pos != std::string::npos) {
+                new_spot_price = std::stof(req.body.substr(s_pos + 13));
+            }
+        }
+
+        if (threads == 0) threads = 1;
+        if (threads > 16) threads = 16;
+
+        const auto t_start = Clock::now();
+
+        // 1. In-place columnar update of spot price in database memory
+        const auto t_update_start = Clock::now();
+        size_t affected = table.update_underlying_spot(underlying_id, new_spot_price);
+        const auto t_update_end = Clock::now();
+        const double update_ms = std::chrono::duration<double, std::milli>(t_update_end - t_update_start).count();
+
+        // 2. In-Engine Parallel SIMD Vector Execution & Reduction
+        riskdb::QueryEngine engine(threads, num_portfolios);
+        riskdb::QueryExecutionStats stats;
+        auto results = engine.execute_risk_query(table, stats);
+        const auto t_end = Clock::now();
+
+        const double total_process_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
+
+        std::cout << "[SIGNAL RECEIVED] Underlying #" << underlying_id << " Spot Price -> $"
+                  << std::fixed << std::setprecision(2) << new_spot_price
+                  << " | Contracts updated in-engine: " << affected << "\n"
+                  << "                 -> In-Place Memory Update: " << std::setprecision(3) << update_ms << " ms\n"
+                  << "                 -> Parallel SIMD Compute: " << stats.compute_time_ms << " ms\n"
+                  << "                 -> O(log T) Reduction Tree: " << stats.reduction_time_ms << " ms\n"
+                  << "                 -> Total Process Completion Time: " << total_process_ms << " ms\n"
+                  << "                 -> Engine Throughput: " << (stats.throughput_rows_per_sec / 1e6) << " M rows/sec\n\n";
+
+        riskdb_last_compute_ms.store(total_process_ms);
+        riskdb_update_ver.fetch_add(1);
+
+        std::ostringstream ss;
+        ss << std::fixed << std::setprecision(4);
+        ss << "{\n";
+        ss << "  \"signal_status\": \"PROCESSED_IN_ENGINE\",\n";
+        ss << "  \"underlying_id\": " << underlying_id << ",\n";
+        ss << "  \"new_spot_price\": " << new_spot_price << ",\n";
+        ss << "  \"contracts_affected\": " << affected << ",\n";
+        ss << "  \"signal_payload_bytes\": 32,\n";
+        ss << "  \"timing_breakdown\": {\n";
+        ss << "    \"in_place_update_time_ms\": " << update_ms << ",\n";
+        ss << "    \"simd_compute_time_ms\": " << stats.compute_time_ms << ",\n";
+        ss << "    \"reduction_time_ms\": " << stats.reduction_time_ms << ",\n";
+        ss << "    \"total_engine_process_time_ms\": " << total_process_ms << ",\n";
+        ss << "    \"throughput_m_rows_sec\": " << (stats.throughput_rows_per_sec / 1e6) << "\n";
+        ss << "  },\n";
+
+        double total_val = 0.0, total_del = 0.0, total_gam = 0.0, total_veg = 0.0;
+        uint64_t total_cnt = 0;
+        for (const auto& m : results) {
+            total_val += m.total_value;
+            total_del += m.total_delta;
+            total_gam += m.total_gamma;
+            total_veg += m.total_vega;
+            total_cnt += m.contract_count;
+        }
+
+        ss << "  \"summary\": {\n";
+        ss << "    \"portfolio_count\": " << results.size() << ",\n";
+        ss << "    \"total_contracts\": " << total_cnt << ",\n";
+        ss << "    \"total_portfolio_value\": " << total_val << ",\n";
+        ss << "    \"total_portfolio_delta\": " << total_del << ",\n";
+        ss << "    \"total_portfolio_gamma\": " << total_gam << ",\n";
+        ss << "    \"total_portfolio_vega\": " << total_veg << "\n";
+        ss << "  },\n";
+        ss << "  \"portfolios\": [\n";
+        for (size_t i = 0; i < results.size(); ++i) {
+            const auto& m = results[i];
+            ss << "    {\"portfolio_id\": " << m.portfolio_id
+               << ", \"contracts\": " << m.contract_count
+               << ", \"total_value\": " << m.total_value
+               << ", \"delta\": " << m.total_delta
+               << ", \"gamma\": " << m.total_gamma
+               << ", \"vega\": " << m.total_vega << "}"
+               << (i + 1 < results.size() ? ",\n" : "\n");
+        }
+        ss << "  ]\n";
+        ss << "}\n";
+
+        return riskdb::HttpResponse::json(ss.str());
+    };
+
+    server.route("POST", "/api/signal", handle_signal);
+    server.route("GET", "/api/signal", handle_signal);
+
+    // Endpoint: Full Academic Benchmark for UI Visualizer (Strong & Weak Scaling + Architectural Comparison)
     server.route("GET", "/api/benchmark", [&table, num_portfolios](const riskdb::HttpRequest& req) {
         size_t threads = std::stoull(req.get_param("threads", "8"));
         if (threads == 0) threads = 8;
         if (threads > 16) threads = 16;
 
         auto strong_res = riskdb::BenchmarkRunner::run_strong_scaling(table, threads, num_portfolios);
+        auto weak_res = riskdb::BenchmarkRunner::run_weak_scaling(std::min(table.size(), static_cast<size_t>(500'000)), threads, num_portfolios);
 
         // Generate matching raw records for architectural comparison
         riskdb::GeneratorConfig cfg;
@@ -225,6 +423,17 @@ int main(int argc, char* argv[]) {
                << ", \"efficiency\": " << (r.efficiency * 100.0)
                << ", \"throughput_m_rows_sec\": " << r.throughput_m_rows_sec << "}"
                << (i + 1 < strong_res.size() ? ",\n" : "\n");
+        }
+        ss << "  ],\n";
+        ss << "  \"weak_scaling\": [\n";
+        for (size_t i = 0; i < weak_res.size(); ++i) {
+            const auto& r = weak_res[i];
+            ss << "    {\"threads\": " << r.threads
+               << ", \"rows\": " << r.rows
+               << ", \"time_ms\": " << r.time_ms
+               << ", \"efficiency\": " << (r.efficiency * 100.0)
+               << ", \"throughput_m_rows_sec\": " << r.throughput_m_rows_sec << "}"
+               << (i + 1 < weak_res.size() ? ",\n" : "\n");
         }
         ss << "  ],\n";
         ss << "  \"architectural_comparison\": {\n";

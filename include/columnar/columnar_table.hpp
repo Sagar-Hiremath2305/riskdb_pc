@@ -54,6 +54,25 @@ public:
     uint32_t* underlying_ids_mut() noexcept { return underlying_ids_.data(); }
     uint64_t* contract_ids_mut() noexcept { return contract_ids_.data(); }
 
+    // In-place spot price mutation upon market signal
+    size_t update_underlying_spot(uint32_t target_underlying_id, float new_spot_price) noexcept;
+    void update_all_spots(float multiplier) noexcept;
+
+    // Stored computed options prices & Greeks in database memory
+    const float* computed_prices() const noexcept { return computed_prices_.data(); }
+    const float* computed_deltas() const noexcept { return computed_deltas_.data(); }
+    const float* computed_gammas() const noexcept { return computed_gammas_.data(); }
+    const float* computed_vegas() const noexcept { return computed_vegas_.data(); }
+    const float* computed_thetas() const noexcept { return computed_thetas_.data(); }
+
+    float* computed_prices_mut() noexcept { return computed_prices_.data(); }
+    float* computed_deltas_mut() noexcept { return computed_deltas_.data(); }
+    float* computed_gammas_mut() noexcept { return computed_gammas_.data(); }
+    float* computed_vegas_mut() noexcept { return computed_vegas_.data(); }
+    float* computed_thetas_mut() noexcept { return computed_thetas_.data(); }
+
+    void recompute_stored_metrics(int target_underlying = -1) noexcept;
+
     // Memory footprint calculation in bytes
     size_t memory_footprint_bytes() const noexcept;
 
@@ -71,6 +90,12 @@ private:
     AlignedUInt16Vector portfolio_ids_;
     AlignedUInt32Vector underlying_ids_;
     AlignedUInt64Vector contract_ids_;
+
+    AlignedFloatVector  computed_prices_;
+    AlignedFloatVector  computed_deltas_;
+    AlignedFloatVector  computed_gammas_;
+    AlignedFloatVector  computed_vegas_;
+    AlignedFloatVector  computed_thetas_;
 };
 
 /**

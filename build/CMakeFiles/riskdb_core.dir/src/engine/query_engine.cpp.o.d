@@ -1,7 +1,7 @@
 CMakeFiles/riskdb_core.dir/src/engine/query_engine.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/src/engine/query_engine.cpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/engine/query_engine.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/engine/query_engine.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/engine/query_engine.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -811,13 +811,13 @@ CMakeFiles/riskdb_core.dir/src/engine/query_engine.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__node_handle \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/default_searcher.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/not_fn.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/columnar/columnar_table.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/types.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/alignment.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/columnar/columnar_pivot.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/simd/simd_black_scholes.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/engine/local_accumulator.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/engine/reduction_tree.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/columnar/columnar_table.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/types.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/alignment.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/columnar/columnar_pivot.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/simd/simd_black_scholes.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/engine/local_accumulator.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/engine/reduction_tree.hpp \
   /opt/homebrew/opt/libomp/include/omp.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/istream \

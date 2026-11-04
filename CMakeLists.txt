@@ -94,9 +94,13 @@ target_link_libraries(riskdb PRIVATE riskdb_core)
 add_executable(traditional_app apps/traditional_app/main.cpp)
 target_link_libraries(traditional_app PRIVATE riskdb_core)
 
-# 3. VM 2: RiskDB Application
+# 3. VM 2: RiskDB In-Engine Database & Server Application
 add_executable(riskdb_app apps/riskdb_app/main.cpp)
 target_link_libraries(riskdb_app PRIVATE riskdb_core)
+
+# 4. VM 2: RiskDB Market Signal Client & Computation Application
+add_executable(riskdb_computation_app apps/riskdb_computation_app/main.cpp)
+target_link_libraries(riskdb_computation_app PRIVATE riskdb_core)
 
 # Unit Tests
 enable_testing()

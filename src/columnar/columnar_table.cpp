@@ -1,4 +1,6 @@
 #include "columnar/columnar_table.hpp"
+#include "common/math_utils.hpp"
+#include <algorithm>
 
 namespace riskdb {
 
@@ -18,6 +20,12 @@ void ColumnarTable::reserve(size_t capacity) {
     portfolio_ids_.reserve(capacity);
     underlying_ids_.reserve(capacity);
     contract_ids_.reserve(capacity);
+
+    computed_prices_.reserve(capacity);
+    computed_deltas_.reserve(capacity);
+    computed_gammas_.reserve(capacity);
+    computed_vegas_.reserve(capacity);
+    computed_thetas_.reserve(capacity);
 }
 
 void ColumnarTable::resize(size_t size) {
@@ -33,6 +41,12 @@ void ColumnarTable::resize(size_t size) {
     portfolio_ids_.resize(size);
     underlying_ids_.resize(size);
     contract_ids_.resize(size);
+
+    computed_prices_.resize(size, 0.0f);
+    computed_deltas_.resize(size, 0.0f);
+    computed_gammas_.resize(size, 0.0f);
+    computed_vegas_.resize(size, 0.0f);
+    computed_thetas_.resize(size, 0.0f);
 }
 
 void ColumnarTable::clear() noexcept {
@@ -47,6 +61,12 @@ void ColumnarTable::clear() noexcept {
     portfolio_ids_.clear();
     underlying_ids_.clear();
     contract_ids_.clear();
+
+    computed_prices_.clear();
+    computed_deltas_.clear();
+    computed_gammas_.clear();
+    computed_vegas_.clear();
+    computed_thetas_.clear();
 }
 
 void ColumnarTable::append(const RawOptionRecord& rec) {
@@ -60,7 +80,69 @@ void ColumnarTable::append(const RawOptionRecord& rec) {
     portfolio_ids_.push_back(rec.portfolio_id);
     underlying_ids_.push_back(rec.underlying_id);
     contract_ids_.push_back(rec.contract_id);
+
+    computed_prices_.push_back(0.0f);
+    computed_deltas_.push_back(0.0f);
+    computed_gammas_.push_back(0.0f);
+    computed_vegas_.push_back(0.0f);
+    computed_thetas_.push_back(0.0f);
+
     ++num_records_;
+}
+
+size_t ColumnarTable::update_underlying_spot(uint32_t target_underlying_id, float new_spot_price) noexcept {
+    size_t count = 0;
+    #pragma omp parallel for reduction(+:count) schedule(static)
+    for (size_t i = 0; i < num_records_; ++i) {
+        if (underlying_ids_[i] == target_underlying_id) {
+            spot_prices_[i] = new_spot_price;
+            ++count;
+        }
+    }
+
+    // Automatically update stored prices & Greeks in database memory for affected underlying
+    recompute_stored_metrics(static_cast<int>(target_underlying_id));
+    return count;
+}
+
+void ColumnarTable::update_all_spots(float multiplier) noexcept {
+    #pragma omp parallel for schedule(static)
+    for (size_t i = 0; i < num_records_; ++i) {
+        spot_prices_[i] *= multiplier;
+    }
+    recompute_stored_metrics(-1);
+}
+
+void ColumnarTable::recompute_stored_metrics(int target_underlying) noexcept {
+    if (computed_prices_.size() != num_records_) {
+        computed_prices_.resize(num_records_, 0.0f);
+        computed_deltas_.resize(num_records_, 0.0f);
+        computed_gammas_.resize(num_records_, 0.0f);
+        computed_vegas_.resize(num_records_, 0.0f);
+        computed_thetas_.resize(num_records_, 0.0f);
+    }
+
+    #pragma omp parallel for schedule(static)
+    for (size_t i = 0; i < num_records_; ++i) {
+        if (target_underlying >= 0 && underlying_ids_[i] != static_cast<uint32_t>(target_underlying)) {
+            continue;
+        }
+
+        OptionGreeks g = black_scholes_scalar(
+            static_cast<double>(spot_prices_[i]),
+            static_cast<double>(strike_prices_[i]),
+            static_cast<double>(times_to_expiry_[i]),
+            static_cast<double>(risk_free_rates_[i]),
+            static_cast<double>(volatilities_[i]),
+            option_types_[i] == 1
+        );
+
+        computed_prices_[i] = static_cast<float>(g.price);
+        computed_deltas_[i] = static_cast<float>(g.delta);
+        computed_gammas_[i] = static_cast<float>(g.gamma);
+        computed_vegas_[i]  = static_cast<float>(g.vega);
+        computed_thetas_[i] = static_cast<float>(g.theta);
+    }
 }
 
 size_t ColumnarTable::memory_footprint_bytes() const noexcept {
@@ -69,7 +151,8 @@ size_t ColumnarTable::memory_footprint_bytes() const noexcept {
         sizeof(uint8_t) +           // option_type
         sizeof(uint16_t) +          // portfolio_id
         sizeof(uint32_t) +          // underlying_id
-        sizeof(uint64_t)            // contract_id
+        sizeof(uint64_t) +          // contract_id
+        sizeof(float) * 5           // computed_price, delta, gamma, vega, theta
     );
 }
 

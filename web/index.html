@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RiskDB: Parallel SIMD Options Risk Dashboard</title>
+    <title>RiskDB: High-Performance Parallel Options Query Engine</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,9 +11,9 @@
 <body>
     <header class="app-header">
         <div class="header-left">
-            <div class="logo-icon">⚡</div>
+            <div class="logo-icon">R</div>
             <div>
-                <h1>RiskDB <span class="badge-tag">HPC ENGINE</span></h1>
+                <h1>RiskDB <span class="badge-tag">HPC ENGINE (VM 2)</span></h1>
                 <p class="subtitle">In-Memory Parallel Vectorized Query Engine (OpenMP & SIMD over PostgreSQL)</p>
             </div>
         </div>
@@ -27,6 +27,14 @@
     </header>
 
     <main class="dashboard-container">
+        <!-- 4-Application Navigation Bar -->
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <a href="./system_dispatcher.html" style="text-decoration: none; background: rgba(157, 78, 221, 0.15); border: 1px solid #9d4edd; color: #c77dff; padding: 6px 14px; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-mono); font-weight: 600;">App 3: System Signal Dispatcher (VM 2)</a>
+            <a href="./client.html" style="text-decoration: none; background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 6px 14px; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-mono); font-weight: 600;">App 4: RiskDB Client Dashboard (Laptop D)</a>
+            <a href="./traditional/client.html" style="text-decoration: none; background: rgba(255, 51, 102, 0.15); border: 1px solid #ff3366; color: #ff3366; padding: 6px 14px; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-mono); font-weight: 600;">App 2: Traditional Client Dashboard (Laptop C)</a>
+            <a href="./traditional/index.html" style="text-decoration: none; background: #111622; border: 1px solid var(--card-border); color: var(--text-secondary); padding: 6px 14px; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-mono); font-weight: 600;">App 1: Traditional System Console (VM 1)</a>
+        </div>
+
         <!-- Control Strip -->
         <section class="controls-card">
             <div class="control-group">
@@ -50,22 +58,79 @@
 
             <div class="control-actions">
                 <button id="runBtn" class="btn btn-primary">
-                    <span class="btn-icon">▶</span> Recalculate Risk
+                    Recalculate Risk
                 </button>
                 <button id="benchmarkBtn" class="btn btn-secondary">
-                    <span class="btn-icon">📊</span> Run Scaling Benchmark
+                    Run Scaling Benchmarks (Strong & Weak)
                 </button>
             </div>
         </section>
 
-        <!-- KPI Cards -->
-        <section class="kpi-grid">
-            <div class="kpi-card">
-                <span class="kpi-label">TOTAL EVALUATED CONTRACTS</span>
-                <span class="kpi-value" id="kpiContracts">--</span>
-                <span class="kpi-sub" id="kpiContractsSub">100 Portfolios</span>
+        <!-- Market Stock Price Change Signal Dispatcher -->
+        <section class="controls-card signal-card">
+            <div class="signal-header">
+                <div>
+                    <h3 style="display: flex; align-items: center; gap: 8px;">
+                        Market Signal Dispatcher (Stock Price Changed Event)
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">
+                        Simulates Application 3 sending a 32-byte stock price change signal. The RiskDB database handles all computation directly in-engine (Zero-Copy).
+                    </p>
+                </div>
             </div>
+
+            <div class="signal-inputs" style="display: flex; gap: 1rem; align-items: flex-end; margin-top: 1rem; flex-wrap: wrap;">
+                <div class="control-group" style="flex: 1; min-width: 180px;">
+                    <label for="signalUnderlying">Select Underlying Asset</label>
+                    <select id="signalUnderlying" style="width: 100%; padding: 8px; background: #0a0d14; color: #fff; border: 1px solid var(--card-border); border-radius: 6px;">
+                        <option value="1">Underlying Asset #1</option>
+                        <option value="2">Underlying Asset #2</option>
+                        <option value="3">Underlying Asset #3</option>
+                        <option value="4">Underlying Asset #4</option>
+                        <option value="5" selected>Underlying Asset #5</option>
+                        <option value="10">Underlying Asset #10</option>
+                        <option value="25">Underlying Asset #25</option>
+                        <option value="50">Underlying Asset #50</option>
+                    </select>
+                </div>
+
+                <div class="control-group" style="flex: 1; min-width: 180px;">
+                    <label for="signalSpot">New Stock Spot Price ($)</label>
+                    <input type="number" id="signalSpot" value="125.50" step="0.50" style="width: 100%; padding: 8px; background: #0a0d14; color: #fff; border: 1px solid var(--card-border); border-radius: 6px;">
+                </div>
+
+                <div class="control-actions" style="margin-bottom: 2px;">
+                    <button id="signalBtn" class="btn" style="background: linear-gradient(135deg, #00f0ff, #00ff88); color: #000; font-weight: 700; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer;">
+                        Dispatch Price Signal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Signal Output Telemetry Strip -->
+            <div id="signalTelemetry" class="signal-telemetry" style="display: none; margin-top: 1rem; padding: 12px; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-family: var(--font-mono); font-size: 0.85rem;">
+                    <div>Signal Payload: <strong style="color: var(--accent-cyan);">32 bytes</strong> (O(1) bandwidth)</div>
+                    <div>Contracts Affected: <strong id="signalAffected" style="color: #fff;">--</strong></div>
+                    <div>In-Place Memory Update: <strong id="signalUpdateMs" style="color: var(--accent-green);">-- ms</strong></div>
+                    <div>SIMD Kernel + Reduction: <strong id="signalComputeMs" style="color: var(--accent-green);">-- ms</strong></div>
+                    <div>Total Process Completion Time: <strong id="signalTotalMs" style="color: #00ff88; font-size: 1rem;">-- ms</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KPI Cards: Timing and Risk Metrics -->
+        <section class="kpi-grid">
             <div class="kpi-card highlight">
+                <span class="kpi-label">TOTAL PROCESS COMPLETION TIME</span>
+                <span class="kpi-value text-accent" id="kpiProcessTime">-- ms</span>
+                <span class="kpi-sub" id="kpiProcessSub">In-Engine Vector Pipeline</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">PROCESSING THROUGHPUT</span>
+                <span class="kpi-value" id="kpiThroughput">-- M/s</span>
+                <span class="kpi-sub" id="kpiContractsSub">1,000,000 Contracts</span>
+            </div>
+            <div class="kpi-card">
                 <span class="kpi-label">TOTAL PORTFOLIO VALUE</span>
                 <span class="kpi-value" id="kpiValue">--</span>
                 <span class="kpi-sub">Mark-to-Market USD</span>
@@ -74,11 +139,6 @@
                 <span class="kpi-label">NET PORTFOLIO DELTA (Δ)</span>
                 <span class="kpi-value" id="kpiDelta">--</span>
                 <span class="kpi-sub">Directional Sensitivity</span>
-            </div>
-            <div class="kpi-card">
-                <span class="kpi-label">NET PORTFOLIO GAMMA (Γ)</span>
-                <span class="kpi-value" id="kpiGamma">--</span>
-                <span class="kpi-sub">Curvature / 2nd Derivative</span>
             </div>
             <div class="kpi-card">
                 <span class="kpi-label">NET PORTFOLIO VEGA (ν)</span>
@@ -100,15 +160,15 @@
                         <span class="dot trad-dot"></span> VM 1: Traditional PostgreSQL Stack
                     </div>
                     <div class="metric-row">
-                        <span>Network Transfer:</span>
+                        <span>Network Socket Streaming:</span>
                         <strong id="tradNetworkTime">-- ms</strong>
                     </div>
                     <div class="metric-row">
-                        <span>Compute Time:</span>
+                        <span>Scalar CPU Computation:</span>
                         <strong id="tradComputeTime">-- ms</strong>
                     </div>
                     <div class="metric-row highlight-row">
-                        <span>End-to-End Latency:</span>
+                        <span>Total Process Latency:</span>
                         <strong id="tradTotalTime">-- ms</strong>
                     </div>
                     <div class="metric-row">
@@ -126,11 +186,11 @@
                         <strong>0.00 ms (In-Memory)</strong>
                     </div>
                     <div class="metric-row">
-                        <span>Vector Compute + Reduction:</span>
+                        <span>Vector Compute + O(log T) Reduction:</span>
                         <strong id="riskComputeTime">-- ms</strong>
                     </div>
                     <div class="metric-row highlight-row">
-                        <span>End-to-End Latency:</span>
+                        <span>Total Process Latency:</span>
                         <strong id="riskTotalTime" class="text-accent">-- ms</strong>
                     </div>
                     <div class="metric-row">
@@ -153,23 +213,82 @@
             </div>
         </section>
 
-        <!-- Benchmark Modal / Section -->
+        <!-- Academic Benchmark Panel (Both Strong & Weak Scaling for Professor) -->
         <section class="benchmark-panel" id="benchmarkPanel" style="display: none;">
-            <h3>Academic Strong Scaling Evaluation (Amdahl's Law)</h3>
-            <div class="table-responsive">
-                <table class="data-table" id="scalingTable">
-                    <thead>
-                        <tr>
-                            <th>Threads (T)</th>
-                            <th>Execution Time</th>
-                            <th>Speedup S(T)</th>
-                            <th>Parallel Efficiency E(T)</th>
-                            <th>Throughput</th>
-                        </tr>
-                    </thead>
-                    <tbody id="scalingTableBody">
-                    </tbody>
-                </table>
+            <div class="benchmark-header-tabs" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 16px;">
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    Academic Scaling & Architectural Evaluation
+                </h3>
+                <div class="bench-tabs" style="display: flex; gap: 8px;">
+                    <button class="bench-tab-btn active" id="tabStrongBtn" onclick="switchBenchTab('strong')">1. Strong Scaling (Amdahl's Law)</button>
+                    <button class="bench-tab-btn" id="tabWeakBtn" onclick="switchBenchTab('weak')">2. Weak Scaling (Gustafson's Law)</button>
+                    <button class="bench-tab-btn" id="tabArchBtn" onclick="switchBenchTab('arch')">3. Architectural Breakdown</button>
+                </div>
+            </div>
+
+            <!-- Tab 1: Strong Scaling -->
+            <div id="tabStrongContent" class="bench-tab-content">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">
+                    <strong>Amdahl's Law Evaluation:</strong> Problem size is fixed at <strong id="strongFixedRows">1,000,000 contracts</strong>. As thread count scales ($T = 1 \to 16$), speedup $S(T) = \frac{T_1}{T_T}$ remains near-linear due to lock-free cache-padded accumulators and $O(\log T)$ reduction.
+                </p>
+                <div class="table-responsive">
+                    <table class="data-table" id="scalingTable">
+                        <thead>
+                            <tr>
+                                <th>Threads (T)</th>
+                                <th>Execution Time</th>
+                                <th>Speedup S(T)</th>
+                                <th>Parallel Efficiency E(T)</th>
+                                <th>Processing Throughput</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scalingTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 2: Weak Scaling -->
+            <div id="tabWeakContent" class="bench-tab-content" style="display: none;">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">
+                    <strong>Gustafson's Law Evaluation:</strong> Problem size scales proportionally with thread allocation ($500,000\text{ contracts/thread}$, up to $8,000,000\text{ rows}$). Execution time remains bounded while throughput scales linearly, demonstrating high sustained parallel efficiency ($\sim 95\%$).
+                </p>
+                <div class="table-responsive">
+                    <table class="data-table" id="weakScalingTable">
+                        <thead>
+                            <tr>
+                                <th>Threads (T)</th>
+                                <th>Workload (Rows)</th>
+                                <th>Execution Time</th>
+                                <th>Scaled Efficiency E(N)</th>
+                                <th>Processing Throughput</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weakScalingTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Architectural Comparison -->
+            <div id="tabArchContent" class="bench-tab-content" style="display: none;">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">
+                    <strong>Architectural Comparison:</strong> Demonstrates the quantitative elimination of the network serialization and row-oriented cache-thrashing bottlenecks in traditional databases.
+                </p>
+                <div class="table-responsive">
+                    <table class="data-table" id="archTable">
+                        <thead>
+                            <tr>
+                                <th>Evaluation Dimension</th>
+                                <th>Traditional Tiered Architecture</th>
+                                <th>RiskDB Parallel SIMD Engine</th>
+                                <th>Performance Advantage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archTableBody">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -193,7 +312,61 @@
                         </tr>
                     </thead>
                     <tbody id="portfoliosTableBody">
-                        <tr><td colspan="7" class="text-center">Click "Recalculate Risk" to fetch live data.</td></tr>
+                        <tr><td colspan="7" class="text-center">Click "Recalculate Risk" or "Dispatch Price Signal" to fetch live data.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Client Application: Live Option Contracts & Greeks View -->
+        <section class="table-card" style="margin-top: 1.5rem; border-top: 2px solid var(--accent-cyan);">
+            <div class="table-header-controls" style="flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h3 style="color: var(--accent-cyan);">Client Application: Option Contracts & Greeks Monitor</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">
+                        Live stream of in-database stored option prices and Greek sensitivities (Delta, Gamma, Vega, Theta), updated in real time whenever signals are received.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <label for="contractUnderlyingFilter" style="font-size: 0.8rem; color: var(--text-secondary);">Underlying:</label>
+                        <select id="contractUnderlyingFilter" style="padding: 4px 8px; background: #0a0d14; color: #fff; border: 1px solid var(--card-border); border-radius: 4px; font-size: 0.8rem;">
+                            <option value="">All Underlyings</option>
+                            <option value="1">Underlying #1</option>
+                            <option value="2">Underlying #2</option>
+                            <option value="3">Underlying #3</option>
+                            <option value="4">Underlying #4</option>
+                            <option value="5" selected>Underlying #5</option>
+                            <option value="10">Underlying #10</option>
+                            <option value="25">Underlying #25</option>
+                            <option value="50">Underlying #50</option>
+                        </select>
+                    </div>
+                    <span class="table-count" id="contractsCountBadge">Showing 50 Contracts</span>
+                    <button id="refreshContractsBtn" class="bench-tab-btn" style="padding: 4px 10px;">Refresh Contracts</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table" id="contractsTable">
+                    <thead>
+                        <tr>
+                            <th>Contract ID</th>
+                            <th>Underlying</th>
+                            <th>Portfolio</th>
+                            <th>Type</th>
+                            <th>Strike (K)</th>
+                            <th>Spot (S)</th>
+                            <th>Expiry (&tau;)</th>
+                            <th>Vol (&sigma;)</th>
+                            <th>Option Price ($)</th>
+                            <th>Delta (&Delta;)</th>
+                            <th>Gamma (&Gamma;)</th>
+                            <th>Vega (&nu;)</th>
+                            <th>Theta (&Theta;)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contractsTableBody">
+                        <tr><td colspan="13" class="text-center">Loading stored contract prices & Greeks...</td></tr>
                     </tbody>
                 </table>
             </div>

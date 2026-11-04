@@ -436,6 +436,39 @@ input[type="range"] {
 
 .text-center { text-align: center; }
 
+/* Benchmark Tabs */
+.bench-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.bench-tab-btn {
+    background: #0d111a;
+    color: var(--text-secondary);
+    border: 1px solid var(--card-border);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bench-tab-btn:hover {
+    color: #fff;
+    border-color: var(--accent-cyan);
+}
+
+.bench-tab-btn.active {
+    background: rgba(0, 240, 255, 0.15);
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+}
+
+.signal-card {
+    border-left: 4px solid var(--accent-cyan);
+}
+
 /* Footer */
 .app-footer {
     text-align: center;

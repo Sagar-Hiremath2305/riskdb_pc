@@ -1,6 +1,6 @@
 CMakeFiles/test_columnar_pivot.dir/tests/test_columnar_pivot.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/tests/test_columnar_pivot.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/tests/test_columnar_pivot.cpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -829,7 +829,7 @@ CMakeFiles/test_columnar_pivot.dir/tests/test_columnar_pivot.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/assert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_assert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_static_assert.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/columnar/columnar_table.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/types.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/alignment.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/columnar/columnar_pivot.hpp
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/columnar/columnar_table.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/types.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/alignment.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/columnar/columnar_pivot.hpp

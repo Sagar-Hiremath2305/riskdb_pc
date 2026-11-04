@@ -54,10 +54,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/sagar/Desktop/projects/riskDB/riskdb
+CMAKE_SOURCE_DIR = /Users/sagar/Desktop/projects/riskDB/riskdb_pc
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/sagar/Desktop/projects/riskDB/riskdb/build
+CMAKE_BINARY_DIR = /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -67,6 +67,7 @@ all: CMakeFiles/riskdb_core.dir/all
 all: CMakeFiles/riskdb.dir/all
 all: CMakeFiles/traditional_app.dir/all
 all: CMakeFiles/riskdb_app.dir/all
+all: CMakeFiles/riskdb_computation_app.dir/all
 all: CMakeFiles/test_simd_accuracy.dir/all
 all: CMakeFiles/test_reduction_tree.dir/all
 all: CMakeFiles/test_columnar_pivot.dir/all
@@ -77,6 +78,7 @@ codegen: CMakeFiles/riskdb_core.dir/codegen
 codegen: CMakeFiles/riskdb.dir/codegen
 codegen: CMakeFiles/traditional_app.dir/codegen
 codegen: CMakeFiles/riskdb_app.dir/codegen
+codegen: CMakeFiles/riskdb_computation_app.dir/codegen
 codegen: CMakeFiles/test_simd_accuracy.dir/codegen
 codegen: CMakeFiles/test_reduction_tree.dir/codegen
 codegen: CMakeFiles/test_columnar_pivot.dir/codegen
@@ -91,6 +93,7 @@ clean: CMakeFiles/riskdb_core.dir/clean
 clean: CMakeFiles/riskdb.dir/clean
 clean: CMakeFiles/traditional_app.dir/clean
 clean: CMakeFiles/riskdb_app.dir/clean
+clean: CMakeFiles/riskdb_computation_app.dir/clean
 clean: CMakeFiles/test_simd_accuracy.dir/clean
 clean: CMakeFiles/test_reduction_tree.dir/clean
 clean: CMakeFiles/test_columnar_pivot.dir/clean
@@ -103,14 +106,14 @@ clean: CMakeFiles/test_columnar_pivot.dir/clean
 CMakeFiles/riskdb_core.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_core.dir/build.make CMakeFiles/riskdb_core.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_core.dir/build.make CMakeFiles/riskdb_core.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=5,6,7,8,9,10,11,12,13,14 "Built target riskdb_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=7,8,9,10,11,12,13,14,15,16 "Built target riskdb_core"
 .PHONY : CMakeFiles/riskdb_core.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/riskdb_core.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 10
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 10
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/riskdb_core.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
 .PHONY : CMakeFiles/riskdb_core.dir/rule
 
 # Convenience name for target.
@@ -120,7 +123,7 @@ riskdb_core: CMakeFiles/riskdb_core.dir/rule
 # codegen rule for target.
 CMakeFiles/riskdb_core.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_core.dir/build.make CMakeFiles/riskdb_core.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=5,6,7,8,9,10,11,12,13,14 "Finished codegen for target riskdb_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=7,8,9,10,11,12,13,14,15,16 "Finished codegen for target riskdb_core"
 .PHONY : CMakeFiles/riskdb_core.dir/codegen
 
 # clean rule for target.
@@ -135,14 +138,14 @@ CMakeFiles/riskdb_core.dir/clean:
 CMakeFiles/riskdb.dir/all: CMakeFiles/riskdb_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb.dir/build.make CMakeFiles/riskdb.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb.dir/build.make CMakeFiles/riskdb.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=1,2 "Built target riskdb"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=1,2 "Built target riskdb"
 .PHONY : CMakeFiles/riskdb.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/riskdb.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/riskdb.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
 .PHONY : CMakeFiles/riskdb.dir/rule
 
 # Convenience name for target.
@@ -152,7 +155,7 @@ riskdb: CMakeFiles/riskdb.dir/rule
 # codegen rule for target.
 CMakeFiles/riskdb.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb.dir/build.make CMakeFiles/riskdb.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=1,2 "Finished codegen for target riskdb"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=1,2 "Finished codegen for target riskdb"
 .PHONY : CMakeFiles/riskdb.dir/codegen
 
 # clean rule for target.
@@ -167,14 +170,14 @@ CMakeFiles/riskdb.dir/clean:
 CMakeFiles/traditional_app.dir/all: CMakeFiles/riskdb_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/traditional_app.dir/build.make CMakeFiles/traditional_app.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/traditional_app.dir/build.make CMakeFiles/traditional_app.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=21,22 "Built target traditional_app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=23,24 "Built target traditional_app"
 .PHONY : CMakeFiles/traditional_app.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/traditional_app.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/traditional_app.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
 .PHONY : CMakeFiles/traditional_app.dir/rule
 
 # Convenience name for target.
@@ -184,7 +187,7 @@ traditional_app: CMakeFiles/traditional_app.dir/rule
 # codegen rule for target.
 CMakeFiles/traditional_app.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/traditional_app.dir/build.make CMakeFiles/traditional_app.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=21,22 "Finished codegen for target traditional_app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=23,24 "Finished codegen for target traditional_app"
 .PHONY : CMakeFiles/traditional_app.dir/codegen
 
 # clean rule for target.
@@ -199,14 +202,14 @@ CMakeFiles/traditional_app.dir/clean:
 CMakeFiles/riskdb_app.dir/all: CMakeFiles/riskdb_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_app.dir/build.make CMakeFiles/riskdb_app.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_app.dir/build.make CMakeFiles/riskdb_app.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=3,4 "Built target riskdb_app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=3,4 "Built target riskdb_app"
 .PHONY : CMakeFiles/riskdb_app.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/riskdb_app.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/riskdb_app.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
 .PHONY : CMakeFiles/riskdb_app.dir/rule
 
 # Convenience name for target.
@@ -216,7 +219,7 @@ riskdb_app: CMakeFiles/riskdb_app.dir/rule
 # codegen rule for target.
 CMakeFiles/riskdb_app.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_app.dir/build.make CMakeFiles/riskdb_app.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=3,4 "Finished codegen for target riskdb_app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=3,4 "Finished codegen for target riskdb_app"
 .PHONY : CMakeFiles/riskdb_app.dir/codegen
 
 # clean rule for target.
@@ -225,20 +228,52 @@ CMakeFiles/riskdb_app.dir/clean:
 .PHONY : CMakeFiles/riskdb_app.dir/clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/riskdb_computation_app.dir
+
+# All Build rule for target.
+CMakeFiles/riskdb_computation_app.dir/all: CMakeFiles/riskdb_core.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_computation_app.dir/build.make CMakeFiles/riskdb_computation_app.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_computation_app.dir/build.make CMakeFiles/riskdb_computation_app.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=5,6 "Built target riskdb_computation_app"
+.PHONY : CMakeFiles/riskdb_computation_app.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/riskdb_computation_app.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 12
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/riskdb_computation_app.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
+.PHONY : CMakeFiles/riskdb_computation_app.dir/rule
+
+# Convenience name for target.
+riskdb_computation_app: CMakeFiles/riskdb_computation_app.dir/rule
+.PHONY : riskdb_computation_app
+
+# codegen rule for target.
+CMakeFiles/riskdb_computation_app.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_computation_app.dir/build.make CMakeFiles/riskdb_computation_app.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=5,6 "Finished codegen for target riskdb_computation_app"
+.PHONY : CMakeFiles/riskdb_computation_app.dir/codegen
+
+# clean rule for target.
+CMakeFiles/riskdb_computation_app.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/riskdb_computation_app.dir/build.make CMakeFiles/riskdb_computation_app.dir/clean
+.PHONY : CMakeFiles/riskdb_computation_app.dir/clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/test_simd_accuracy.dir
 
 # All Build rule for target.
 CMakeFiles/test_simd_accuracy.dir/all: CMakeFiles/riskdb_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simd_accuracy.dir/build.make CMakeFiles/test_simd_accuracy.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simd_accuracy.dir/build.make CMakeFiles/test_simd_accuracy.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=19,20 "Built target test_simd_accuracy"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=21,22 "Built target test_simd_accuracy"
 .PHONY : CMakeFiles/test_simd_accuracy.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test_simd_accuracy.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/test_simd_accuracy.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
 .PHONY : CMakeFiles/test_simd_accuracy.dir/rule
 
 # Convenience name for target.
@@ -248,7 +283,7 @@ test_simd_accuracy: CMakeFiles/test_simd_accuracy.dir/rule
 # codegen rule for target.
 CMakeFiles/test_simd_accuracy.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_simd_accuracy.dir/build.make CMakeFiles/test_simd_accuracy.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=19,20 "Finished codegen for target test_simd_accuracy"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=21,22 "Finished codegen for target test_simd_accuracy"
 .PHONY : CMakeFiles/test_simd_accuracy.dir/codegen
 
 # clean rule for target.
@@ -263,14 +298,14 @@ CMakeFiles/test_simd_accuracy.dir/clean:
 CMakeFiles/test_reduction_tree.dir/all: CMakeFiles/riskdb_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_reduction_tree.dir/build.make CMakeFiles/test_reduction_tree.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_reduction_tree.dir/build.make CMakeFiles/test_reduction_tree.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=17,18 "Built target test_reduction_tree"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=19,20 "Built target test_reduction_tree"
 .PHONY : CMakeFiles/test_reduction_tree.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test_reduction_tree.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/test_reduction_tree.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
 .PHONY : CMakeFiles/test_reduction_tree.dir/rule
 
 # Convenience name for target.
@@ -280,7 +315,7 @@ test_reduction_tree: CMakeFiles/test_reduction_tree.dir/rule
 # codegen rule for target.
 CMakeFiles/test_reduction_tree.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_reduction_tree.dir/build.make CMakeFiles/test_reduction_tree.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=17,18 "Finished codegen for target test_reduction_tree"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=19,20 "Finished codegen for target test_reduction_tree"
 .PHONY : CMakeFiles/test_reduction_tree.dir/codegen
 
 # clean rule for target.
@@ -295,14 +330,14 @@ CMakeFiles/test_reduction_tree.dir/clean:
 CMakeFiles/test_columnar_pivot.dir/all: CMakeFiles/riskdb_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_columnar_pivot.dir/build.make CMakeFiles/test_columnar_pivot.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_columnar_pivot.dir/build.make CMakeFiles/test_columnar_pivot.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=15,16 "Built target test_columnar_pivot"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=17,18 "Built target test_columnar_pivot"
 .PHONY : CMakeFiles/test_columnar_pivot.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test_columnar_pivot.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/test_columnar_pivot.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles 0
 .PHONY : CMakeFiles/test_columnar_pivot.dir/rule
 
 # Convenience name for target.
@@ -312,7 +347,7 @@ test_columnar_pivot: CMakeFiles/test_columnar_pivot.dir/rule
 # codegen rule for target.
 CMakeFiles/test_columnar_pivot.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_columnar_pivot.dir/build.make CMakeFiles/test_columnar_pivot.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb/build/CMakeFiles --progress-num=15,16 "Finished codegen for target test_columnar_pivot"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sagar/Desktop/projects/riskDB/riskdb_pc/build/CMakeFiles --progress-num=17,18 "Finished codegen for target test_columnar_pivot"
 .PHONY : CMakeFiles/test_columnar_pivot.dir/codegen
 
 # clean rule for target.

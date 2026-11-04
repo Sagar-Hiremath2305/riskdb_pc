@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/tests/test_reduction_tree.cpp" "CMakeFiles/test_reduction_tree.dir/tests/test_reduction_tree.cpp.o" "gcc" "CMakeFiles/test_reduction_tree.dir/tests/test_reduction_tree.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/tests/test_reduction_tree.cpp" "CMakeFiles/test_reduction_tree.dir/tests/test_reduction_tree.cpp.o" "gcc" "CMakeFiles/test_reduction_tree.dir/tests/test_reduction_tree.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

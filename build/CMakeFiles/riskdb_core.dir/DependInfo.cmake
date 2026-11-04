@@ -8,15 +8,15 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/benchmark/benchmark_runner.cpp" "CMakeFiles/riskdb_core.dir/src/benchmark/benchmark_runner.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/benchmark/benchmark_runner.cpp.o.d"
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/columnar/columnar_pivot.cpp" "CMakeFiles/riskdb_core.dir/src/columnar/columnar_pivot.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/columnar/columnar_pivot.cpp.o.d"
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/columnar/columnar_table.cpp" "CMakeFiles/riskdb_core.dir/src/columnar/columnar_table.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/columnar/columnar_table.cpp.o.d"
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/common/math_utils.cpp" "CMakeFiles/riskdb_core.dir/src/common/math_utils.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/common/math_utils.cpp.o.d"
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/engine/query_engine.cpp" "CMakeFiles/riskdb_core.dir/src/engine/query_engine.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/engine/query_engine.cpp.o.d"
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/server/http_server.cpp" "CMakeFiles/riskdb_core.dir/src/server/http_server.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/server/http_server.cpp.o.d"
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/simd/simd_black_scholes.cpp" "CMakeFiles/riskdb_core.dir/src/simd/simd_black_scholes.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/simd/simd_black_scholes.cpp.o.d"
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/storage/data_generator.cpp" "CMakeFiles/riskdb_core.dir/src/storage/data_generator.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/storage/data_generator.cpp.o.d"
-  "/Users/sagar/Desktop/projects/riskDB/riskdb/src/storage/postgres_connector.cpp" "CMakeFiles/riskdb_core.dir/src/storage/postgres_connector.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/storage/postgres_connector.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/benchmark/benchmark_runner.cpp" "CMakeFiles/riskdb_core.dir/src/benchmark/benchmark_runner.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/benchmark/benchmark_runner.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/columnar/columnar_pivot.cpp" "CMakeFiles/riskdb_core.dir/src/columnar/columnar_pivot.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/columnar/columnar_pivot.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/columnar/columnar_table.cpp" "CMakeFiles/riskdb_core.dir/src/columnar/columnar_table.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/columnar/columnar_table.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/common/math_utils.cpp" "CMakeFiles/riskdb_core.dir/src/common/math_utils.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/common/math_utils.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/engine/query_engine.cpp" "CMakeFiles/riskdb_core.dir/src/engine/query_engine.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/engine/query_engine.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/server/http_server.cpp" "CMakeFiles/riskdb_core.dir/src/server/http_server.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/server/http_server.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/simd/simd_black_scholes.cpp" "CMakeFiles/riskdb_core.dir/src/simd/simd_black_scholes.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/simd/simd_black_scholes.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/storage/data_generator.cpp" "CMakeFiles/riskdb_core.dir/src/storage/data_generator.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/storage/data_generator.cpp.o.d"
+  "/Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/storage/postgres_connector.cpp" "CMakeFiles/riskdb_core.dir/src/storage/postgres_connector.cpp.o" "gcc" "CMakeFiles/riskdb_core.dir/src/storage/postgres_connector.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

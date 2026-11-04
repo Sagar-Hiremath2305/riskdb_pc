@@ -1,7 +1,7 @@
 CMakeFiles/riskdb_core.dir/src/simd/simd_black_scholes.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/src/simd/simd_black_scholes.cpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/simd/simd_black_scholes.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/src/simd/simd_black_scholes.cpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/simd/simd_black_scholes.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstddef \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__config_site \
@@ -58,7 +58,7 @@ CMakeFiles/riskdb_core.dir/src/simd/simd_black_scholes.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uintptr_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_intmax_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uintmax_t.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/columnar/columnar_table.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/columnar/columnar_table.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/comparison.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/equal.h \
@@ -786,10 +786,10 @@ CMakeFiles/riskdb_core.dir/src/simd/simd_black_scholes.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wbuffer_convert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__locale_dir/wstring_convert.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdarg \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/types.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/alignment.hpp \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/simd/simd_math.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/types.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/alignment.hpp \
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/simd/simd_math.hpp \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_neon.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_bf16.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/21/include/arm_vector_types.h \
-  /Users/sagar/Desktop/projects/riskDB/riskdb/include/common/math_utils.hpp
+  /Users/sagar/Desktop/projects/riskDB/riskdb_pc/include/common/math_utils.hpp
