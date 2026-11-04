@@ -3,11 +3,16 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <csignal>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
 
 namespace riskdb {
 
@@ -25,6 +30,8 @@ void HttpServer::route(const std::string& method, const std::string& path, HttpH
 bool HttpServer::start() {
     if (running_) return true;
 
+    signal(SIGPIPE, SIG_IGN);
+
     server_socket_ = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket_ < 0) {
         std::cerr << "[-] Error creating socket\n";
@@ -33,6 +40,9 @@ bool HttpServer::start() {
 
     int opt = 1;
     setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+#ifdef SO_REUSEPORT
+    setsockopt(server_socket_, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+#endif
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
@@ -46,7 +56,7 @@ bool HttpServer::start() {
         return false;
     }
 
-    if (listen(server_socket_, 64) < 0) {
+    if (listen(server_socket_, 128) < 0) {
         std::cerr << "[-] Error listening on socket\n";
         close(server_socket_);
         server_socket_ = -1;
@@ -88,7 +98,13 @@ void HttpServer::accept_loop() {
 
         // Spawn a thread or handle client synchronously (short lived requests)
         std::thread([this, client_sock]() {
-            handle_client(client_sock);
+            try {
+                handle_client(client_sock);
+            } catch (const std::exception& e) {
+                std::cerr << "[-] Exception in client thread: " << e.what() << "\n";
+            } catch (...) {
+                std::cerr << "[-] Unknown exception in client thread\n";
+            }
         }).detach();
     }
 }
@@ -180,6 +196,12 @@ std::string HttpServer::read_static_file(const std::string& relative_path, std::
 }
 
 void HttpServer::handle_client(int client_sock) {
+    struct timeval tv;
+    tv.tv_sec = 10;
+    tv.tv_usec = 0;
+    setsockopt(client_sock, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&tv), sizeof(tv));
+    setsockopt(client_sock, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&tv), sizeof(tv));
+
     std::vector<char> buffer(16384, 0);
     ssize_t bytes_read = recv(client_sock, buffer.data(), buffer.size() - 1, 0);
 
@@ -199,21 +221,29 @@ void HttpServer::handle_client(int client_sock) {
         res.status_text = "No Content";
         res.body = "";
     } else {
-        auto route_it = routes_.find({req.method, req.path});
-        if (route_it != routes_.end()) {
-            res = route_it->second(req);
-        } else {
-            // Check static file
-            std::string mime;
-            std::string file_content = read_static_file(req.path, mime);
-            if (!file_content.empty()) {
-                res.status_code = 200;
-                res.status_text = "OK";
-                res.content_type = mime;
-                res.body = file_content;
+        try {
+            auto route_it = routes_.find({req.method, req.path});
+            if (route_it != routes_.end()) {
+                res = route_it->second(req);
             } else {
-                res = HttpResponse::not_found("Endpoint or resource not found: " + req.path);
+                // Check static file
+                std::string mime;
+                std::string file_content = read_static_file(req.path, mime);
+                if (!file_content.empty()) {
+                    res.status_code = 200;
+                    res.status_text = "OK";
+                    res.content_type = mime;
+                    res.body = file_content;
+                } else {
+                    res = HttpResponse::not_found("Endpoint or resource not found: " + req.path);
+                }
             }
+        } catch (const std::exception& e) {
+            std::cerr << "[-] Error executing route " << req.path << ": " << e.what() << "\n";
+            res = HttpResponse::json("{\"error\": \"Internal Server Error\", \"details\": \"" + std::string(e.what()) + "\"}", 500);
+        } catch (...) {
+            std::cerr << "[-] Unknown error executing route " << req.path << "\n";
+            res = HttpResponse::json("{\"error\": \"Internal Server Error\"}", 500);
         }
     }
 
@@ -229,7 +259,7 @@ void HttpServer::handle_client(int client_sock) {
     response_stream << res.body;
 
     std::string res_str = response_stream.str();
-    send(client_sock, res_str.data(), res_str.size(), 0);
+    send(client_sock, res_str.data(), res_str.size(), MSG_NOSIGNAL);
     close(client_sock);
 }
 

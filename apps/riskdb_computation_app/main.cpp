@@ -7,6 +7,7 @@
 #include <sstream>
 #include <cstring>
 #include <future>
+#include <csignal>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -15,29 +16,42 @@
 #include <netdb.h>
 #include "server/http_server.hpp"
 
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
 using Clock = std::chrono::high_resolution_clock;
 
-// Helper function to send an HTTP GET or POST request via raw socket
+// Helper function to send an HTTP GET or POST request via raw socket (fully thread-safe)
 std::string send_http_request(const std::string& host, int port, const std::string& method, const std::string& path, const std::string& body = "") {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) return "";
 
-    struct hostent* server = gethostbyname(host.c_str());
-    if (!server) {
-        close(sock);
-        return "";
-    }
-
     sockaddr_in serv_addr{};
     serv_addr.sin_family = AF_INET;
-    std::memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length);
     serv_addr.sin_port = htons(port);
+
+    // 1. Thread-safe numeric IP parsing without libc gethostbyname static buffer
+    if (inet_pton(AF_INET, host.c_str(), &serv_addr.sin_addr) <= 0) {
+        // 2. Thread-safe DNS resolution via getaddrinfo
+        struct addrinfo hints{}, *res = nullptr;
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
+        std::string port_str = std::to_string(port);
+        if (getaddrinfo(host.c_str(), port_str.c_str(), &hints, &res) != 0 || !res) {
+            close(sock);
+            return "";
+        }
+        std::memcpy(&serv_addr, res->ai_addr, sizeof(serv_addr));
+        freeaddrinfo(res);
+    }
 
     // 30-second socket timeout to accommodate large WAN data transfers
     struct timeval tv;
     tv.tv_sec = 30;
     tv.tv_usec = 0;
     setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&tv), sizeof(tv));
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&tv), sizeof(tv));
 
     if (connect(sock, reinterpret_cast<sockaddr*>(&serv_addr), sizeof(serv_addr)) < 0) {
         close(sock);
@@ -59,7 +73,11 @@ std::string send_http_request(const std::string& host, int port, const std::stri
     }
 
     std::string req_str = req.str();
-    send(sock, req_str.data(), req_str.size(), 0);
+    ssize_t sent = send(sock, req_str.data(), req_str.size(), MSG_NOSIGNAL);
+    if (sent < 0) {
+        close(sock);
+        return "";
+    }
 
     std::string response;
     char buffer[4096];
@@ -123,6 +141,8 @@ void print_help(const char* prog) {
 }
 
 int main(int argc, char* argv[]) {
+    signal(SIGPIPE, SIG_IGN);
+
     int server_port = 8080;
     std::string riskdb_host = "127.0.0.1";
     int riskdb_port = 9090;
@@ -287,8 +307,10 @@ int main(int argc, char* argv[]) {
     auto handle_broadcast = [&riskdb_host, &riskdb_port, &trad_host, &trad_port, threads](const riskdb::HttpRequest& req) {
         uint32_t uid = 1;
         float spot = 100.0f;
-        if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
-        if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+        try {
+            if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
+            if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+        } catch (...) {}
 
         std::cout << "[DUAL BROADCAST INITIATED] Underlying #" << uid << " New Spot: $" << spot << "\n"
                   << "  -> Launching concurrent requests to RiskDB (" << riskdb_host << ":" << riskdb_port << ") and Traditional (" << trad_host << ":" << trad_port << ")...\n";
@@ -360,8 +382,10 @@ int main(int argc, char* argv[]) {
     auto handle_riskdb_only = [&riskdb_host, &riskdb_port, threads](const riskdb::HttpRequest& req) {
         uint32_t uid = 1;
         float spot = 100.0f;
-        if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
-        if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+        try {
+            if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
+            if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+        } catch (...) {}
 
         std::string risk_path = "/api/signal?underlying=" + std::to_string(uid) + "&spot=" + std::to_string(spot) + "&threads=" + std::to_string(threads);
         auto res = execute_service_call(riskdb_host, riskdb_port, risk_path);
@@ -386,8 +410,10 @@ int main(int argc, char* argv[]) {
     auto handle_traditional_only = [&trad_host, &trad_port](const riskdb::HttpRequest& req) {
         uint32_t uid = 1;
         float spot = 100.0f;
-        if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
-        if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+        try {
+            if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
+            if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+        } catch (...) {}
 
         std::string trad_path = "/api/signal?underlying=" + std::to_string(uid) + "&spot=" + std::to_string(spot);
         auto res = execute_service_call(trad_host, trad_port, trad_path);
