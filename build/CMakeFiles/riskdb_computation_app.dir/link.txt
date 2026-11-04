@@ -1,1 +1,0 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/opt/ruby/lib CMakeFiles/riskdb_computation_app.dir/apps/riskdb_computation_app/main.cpp.o -o riskdb_computation_app  libriskdb_core.a /opt/homebrew/opt/libomp/lib/libomp.dylib /opt/homebrew/lib/libpq.dylib

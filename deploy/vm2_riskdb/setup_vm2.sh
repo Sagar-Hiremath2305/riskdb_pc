@@ -9,7 +9,8 @@ echo "======================================================================"
 sudo apt-get update -y
 sudo apt-get install -y build-essential cmake libomp-dev
 
-# 2. Build RiskDB Market Signal Client & Engine
+# 2. Build RiskDB Market Signal Client & Engine (Clean any stale local/Mac cache)
+rm -rf build
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --target riskdb_computation_app riskdb_app riskdb -j$(nproc)

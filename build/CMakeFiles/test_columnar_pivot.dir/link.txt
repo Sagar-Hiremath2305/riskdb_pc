@@ -1,1 +1,0 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/opt/ruby/lib CMakeFiles/test_columnar_pivot.dir/tests/test_columnar_pivot.cpp.o -o test_columnar_pivot  libriskdb_core.a /opt/homebrew/opt/libomp/lib/libomp.dylib /opt/homebrew/lib/libpq.dylib

@@ -9,7 +9,8 @@ echo "======================================================================"
 sudo apt-get update -y
 sudo apt-get install -y build-essential cmake libpq-dev postgresql-client libomp-dev
 
-# 2. Build Traditional Application
+# 2. Build Traditional Application (Clean any stale local/Mac cache)
+rm -rf build
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --target traditional_app riskdb -j$(nproc)

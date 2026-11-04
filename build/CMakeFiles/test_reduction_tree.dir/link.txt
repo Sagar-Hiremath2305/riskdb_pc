@@ -1,1 +1,0 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/opt/ruby/lib CMakeFiles/test_reduction_tree.dir/tests/test_reduction_tree.cpp.o -o test_reduction_tree  libriskdb_core.a /opt/homebrew/opt/libomp/lib/libomp.dylib /opt/homebrew/lib/libpq.dylib
