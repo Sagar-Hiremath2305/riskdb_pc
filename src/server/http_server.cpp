@@ -155,13 +155,28 @@ std::string HttpServer::read_static_file(const std::string& relative_path, std::
     else if (clean_path.find(".json") != std::string::npos) out_content_type = "application/json";
     else out_content_type = "text/plain";
 
-    std::string full_path = static_dir_ + clean_path;
-    std::ifstream file(full_path, std::ios::binary);
-    if (!file.is_open()) return "";
+    std::vector<std::string> candidates = {
+        static_dir_ + clean_path,
+        "." + clean_path,
+        ".." + clean_path,
+        "../web" + clean_path,
+        "../web/traditional" + clean_path,
+        "./web" + clean_path,
+        "./web/traditional" + clean_path,
+        "/home/azureuser/riskdb/web" + clean_path,
+        "/home/azureuser/riskdb/web/traditional" + clean_path
+    };
 
-    std::ostringstream ss;
-    ss << file.rdbuf();
-    return ss.str();
+    for (const auto& candidate : candidates) {
+        std::ifstream file(candidate, std::ios::binary);
+        if (file.is_open()) {
+            std::ostringstream ss;
+            ss << file.rdbuf();
+            return ss.str();
+        }
+    }
+
+    return "";
 }
 
 void HttpServer::handle_client(int client_sock) {
