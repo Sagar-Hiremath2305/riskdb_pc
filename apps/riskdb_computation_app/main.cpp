@@ -307,9 +307,26 @@ int main(int argc, char* argv[]) {
         auto res_risk = f_risk.get();
         auto res_trad = f_trad.get();
 
-        const double speedup = (res_risk.roundtrip_ms > 0.0) ? (res_trad.roundtrip_ms / res_risk.roundtrip_ms) : 1.0;
+        // Extract accurate Traditional end-to-end latency (including WAN transmission delay)
+        double trad_latency = res_trad.roundtrip_ms;
+        size_t pos = res_trad.raw_body.find("\"total_time_ms\":");
+        if (pos != std::string::npos) {
+            size_t start = pos + 16;
+            while (start < res_trad.raw_body.size() && (res_trad.raw_body[start] == ' ' || res_trad.raw_body[start] == ':')) ++start;
+            size_t end = res_trad.raw_body.find_first_of(",\r\n}", start);
+            if (end != std::string::npos) {
+                try {
+                    double parsed_total = std::stod(res_trad.raw_body.substr(start, end - start));
+                    if (parsed_total > trad_latency) {
+                        trad_latency = parsed_total;
+                    }
+                } catch (...) {}
+            }
+        }
 
-        std::cout << "  [RESULT] RiskDB RTT: " << res_risk.roundtrip_ms << " ms | Traditional RTT: " << res_trad.roundtrip_ms << " ms\n"
+        const double speedup = (res_risk.roundtrip_ms > 0.0) ? (trad_latency / res_risk.roundtrip_ms) : 1.0;
+
+        std::cout << "  [RESULT] RiskDB RTT: " << res_risk.roundtrip_ms << " ms | Traditional Total Latency: " << trad_latency << " ms\n"
                   << "  [OUTCOME] Speedup: " << std::fixed << std::setprecision(1) << speedup << "x FASTER\n\n";
 
         std::ostringstream ss;
@@ -327,7 +344,7 @@ int main(int argc, char* argv[]) {
            << "  },\n"
            << "  \"traditional\": {\n"
            << "    \"reachable\": " << (res_trad.reachable ? "true" : "false") << ",\n"
-           << "    \"roundtrip_ms\": " << res_trad.roundtrip_ms << ",\n"
+           << "    \"roundtrip_ms\": " << trad_latency << ",\n"
            << "    \"payload_bytes\": 48000000,\n"
            << "    \"raw_response\": " << (res_trad.raw_body.empty() ? "{}" : res_trad.raw_body) << "\n"
            << "  }\n"
@@ -374,6 +391,19 @@ int main(int argc, char* argv[]) {
 
         std::string trad_path = "/api/signal?underlying=" + std::to_string(uid) + "&spot=" + std::to_string(spot);
         auto res = execute_service_call(trad_host, trad_port, trad_path);
+        double trad_latency = res.roundtrip_ms;
+        size_t pos = res.raw_body.find("\"total_time_ms\":");
+        if (pos != std::string::npos) {
+            size_t start = pos + 16;
+            while (start < res.raw_body.size() && (res.raw_body[start] == ' ' || res.raw_body[start] == ':')) ++start;
+            size_t end = res.raw_body.find_first_of(",\r\n}", start);
+            if (end != std::string::npos) {
+                try {
+                    double parsed_total = std::stod(res.raw_body.substr(start, end - start));
+                    if (parsed_total > trad_latency) trad_latency = parsed_total;
+                } catch (...) {}
+            }
+        }
 
         std::ostringstream ss;
         ss << std::fixed << std::setprecision(2);
@@ -381,7 +411,7 @@ int main(int argc, char* argv[]) {
            << "  \"target\": \"Traditional Tiered Application\",\n"
            << "  \"underlying_id\": " << uid << ",\n"
            << "  \"new_spot_price\": " << spot << ",\n"
-           << "  \"roundtrip_ms\": " << res.roundtrip_ms << ",\n"
+           << "  \"roundtrip_ms\": " << trad_latency << ",\n"
            << "  \"payload_bytes\": 48000000,\n"
            << "  \"raw_response\": " << (res.raw_body.empty() ? "{}" : res.raw_body) << "\n"
            << "}\n";
