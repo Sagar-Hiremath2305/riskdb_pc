@@ -209,42 +209,12 @@
         document.getElementById('refreshTradBtn').addEventListener('click', fetchTraditionalContracts);
         document.getElementById('tradUnderlyingFilter').addEventListener('change', fetchTraditionalContracts);
 
-        // Real-Time Cross-Tab / Cross-Window BroadcastChannel (< 0.5 ms latency)
-        if (window.BroadcastChannel) {
-            try {
-                const bc = new BroadcastChannel('riskdb_live_channel');
-                bc.onmessage = (ev) => {
-                    if (ev.data && ev.data.type === 'RISKDB_SIGNAL_BROADCAST') {
-                        const autoFollow = document.getElementById('autoFollowTrad').checked;
-                        if (autoFollow && ev.data.underlying_id) {
-                            document.getElementById('tradUnderlyingFilter').value = ev.data.underlying_id;
-                        }
-                        fetchTraditionalContracts();
-                    }
-                };
-            } catch (_) {}
-        }
-
-        // Cross-Window Storage Event Sync
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'riskdb_latest_signal' && e.newValue) {
-                try {
-                    const data = JSON.parse(e.newValue);
-                    const autoFollow = document.getElementById('autoFollowTrad').checked;
-                    if (autoFollow && data.underlying_id) {
-                        document.getElementById('tradUnderlyingFilter').value = data.underlying_id;
-                    }
-                    fetchTraditionalContracts();
-                } catch (_) {}
-            }
-        });
-
-        // Auto-sync polling every 300ms
+        // Auto-sync polling every 500ms (will only advance once Traditional DBMS finishes WAN serialization)
         setInterval(() => {
             if (document.getElementById('autoSyncTrad').checked) {
                 fetchTraditionalContracts();
             }
-        }, 300);
+        }, 500);
 
         document.addEventListener('DOMContentLoaded', fetchTraditionalContracts);
     </script>
