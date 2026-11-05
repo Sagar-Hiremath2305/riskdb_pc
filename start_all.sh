@@ -33,13 +33,13 @@ nohup bash -c 'while true; do ssh -N -o ServerAliveInterval=10 -o ServerAliveCou
 nohup bash -c 'while true; do ssh -N -o ServerAliveInterval=10 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -R 9090:localhost:9090 -L 8080:localhost:8080 vm2 2>/dev/null; sleep 2; done' >/dev/null 2>&1 &
 sleep 2
 
-# 3. Start VM 1 Traditional Service
-echo "[*] 3/4 Starting Traditional DBMS Service on Azure VM 1 (20.244.34.9:8081)..."
+# 2. Start VM 1 Traditional Service
+echo "[*] 2/3 Starting Traditional DBMS Service on Azure VM 1 (20.244.34.9:8081)..."
 ssh vm1 "sudo systemctl restart traditional-app.service"
 
-# 4. Start VM 2 Computation App
-echo "[*] 4/4 Starting RiskDB Computation Service on Azure VM 2 (40.81.233.84:8080)..."
-ssh vm2 "sudo systemctl restart riskdb-computation.service"
+# 3. Start VM 2 RiskDB Engine and Dispatcher
+echo "[*] 3/3 Starting RiskDB AVX2 In-Engine Database & Dispatcher on Azure VM 2 (40.81.233.84:8080)..."
+ssh vm2 "sudo systemctl restart riskdb-engine.service && sudo systemctl restart riskdb-computation.service"
 
 echo "======================================================================"
 echo "[+] All services active! Open in browser:"
