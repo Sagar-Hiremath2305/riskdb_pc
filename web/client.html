@@ -211,19 +211,34 @@
 
             try {
                 const res = await fetch(url);
-                if (!res.ok) return;
-                const data = await res.json();
+                if (!res.ok) {
+                    const pill = document.getElementById('riskClientStatusPill');
+                    if (pill) {
+                        pill.style.borderColor = '#ff3366';
+                        pill.style.color = '#ff3366';
+                        document.getElementById('riskClientStatusText').textContent = 'Connecting to Database Tunnel...';
+                    }
+                    return;
+                }
+                const pill = document.getElementById('riskClientStatusPill');
+                if (pill) {
+                    pill.style.borderColor = 'var(--accent-cyan)';
+                    pill.style.color = 'var(--accent-cyan)';
+                    document.getElementById('riskClientStatusText').textContent = 'In-Engine Database Active (Port 8080)';
+                }
 
+                const data = await res.json();
                 const version = data.update_version || 0;
                 const isNewUpdate = (version > lastVersion && lastVersion !== 0);
-                lastVersion = version;
 
                 // Auto-follow signal: If an underlying asset was updated, switch to it automatically
                 const autoFollow = document.getElementById('autoFollowRisk').checked;
                 if (isNewUpdate && data.last_underlying_id && autoFollow && filterEl.value != data.last_underlying_id) {
                     filterEl.value = data.last_underlying_id;
+                    // Do not advance lastVersion yet so the follow-up fetch renders with highlight-green
                     return fetchRiskDBContracts();
                 }
+                lastVersion = version;
 
                 const computeMs = data.last_compute_ms || 2.1;
                 document.getElementById('kpiRiskSimdCompute').textContent = `${computeMs.toFixed(2)} ms`;

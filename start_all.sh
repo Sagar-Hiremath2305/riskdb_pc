@@ -18,14 +18,15 @@ else
     echo "[+] 1/4 Local RiskDB In-Memory Engine is already running."
 fi
 
-# 2. Establish SSH Tunnels to Azure VMs
-echo "[*] 2/4 Establishing WAN Reverse Tunnels to Azure VMs..."
+# 2. Establish Persistent SSH Tunnels to Azure VMs
+echo "[*] 2/4 Establishing Resilient WAN Reverse Tunnels to Azure VMs..."
 pkill -f "5432:localhost:5432" 2>/dev/null || true
 pkill -f "9090:localhost:9090" 2>/dev/null || true
+pkill -f "ServerAliveInterval=10" 2>/dev/null || true
 sleep 1
 
-ssh -N -R 5432:localhost:5432 -L 8081:localhost:8081 vm1 >/dev/null 2>&1 &
-ssh -N -R 9090:localhost:9090 -L 8080:localhost:8080 vm2 >/dev/null 2>&1 &
+nohup bash -c 'while true; do ssh -N -o ServerAliveInterval=10 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -R 5432:localhost:5432 -L 8081:localhost:8081 vm1 2>/dev/null; sleep 2; done' >/dev/null 2>&1 &
+nohup bash -c 'while true; do ssh -N -o ServerAliveInterval=10 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -R 9090:localhost:9090 -L 8080:localhost:8080 vm2 2>/dev/null; sleep 2; done' >/dev/null 2>&1 &
 sleep 2
 
 # 3. Start VM 1 Traditional Service

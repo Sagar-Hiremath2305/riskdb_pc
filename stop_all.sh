@@ -14,10 +14,9 @@ ssh vm1 "sudo systemctl stop traditional-app.service && killall traditional_app 
 
 echo "[*] 3/3 Terminating local Mac daemons and SSH reverse tunnels..."
 killall riskdb_app 2>/dev/null || true
-pkill -f "ssh -N -R 9090:localhost:9090" 2>/dev/null || true
-pkill -f "ssh -N -R 5432:localhost:5432" 2>/dev/null || true
-pkill -f "ssh -N -R 5432" 2>/dev/null || true
-pkill -f "ssh -N -R 9090" 2>/dev/null || true
+pkill -f "ServerAliveInterval=10" 2>/dev/null || true
+pkill -f "5432:localhost:5432" 2>/dev/null || true
+pkill -f "9090:localhost:9090" 2>/dev/null || true
 
 echo "======================================================================"
 echo "[+] All distributed services and tunnels have been stopped cleanly."
