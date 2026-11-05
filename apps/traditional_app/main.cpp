@@ -128,6 +128,7 @@ int main(int argc, char* argv[]) {
     double last_fetch_time_ms = 0.0;
     double last_compute_time_ms = 0.0;
     uint64_t update_version = 0;
+    uint32_t last_underlying = 5;
 
     auto compute_traditional = [&cached_records, &cached_greeks, &last_fetch_time_ms, &last_compute_time_ms, &update_version, &connector, live_fetch, real_db_fetch_ms, num_portfolios](double& fetch_ms, double& comp_ms) {
         if (live_fetch && connector.is_connected()) {
@@ -217,7 +218,7 @@ int main(int argc, char* argv[]) {
         return riskdb::HttpResponse::json(json);
     });
 
-    server.route("GET", "/api/contracts", [&cached_records, &cached_greeks, &last_fetch_time_ms, &last_compute_time_ms, &update_version](const riskdb::HttpRequest& req) {
+    server.route("GET", "/api/contracts", [&cached_records, &cached_greeks, &last_fetch_time_ms, &last_compute_time_ms, &update_version, &last_underlying](const riskdb::HttpRequest& req) {
         size_t limit = 100;
         size_t offset = 0;
         int underlying_filter = -1;
@@ -235,6 +236,7 @@ int main(int argc, char* argv[]) {
         ss << "{\n";
         ss << "  \"total_stored_contracts\": " << cached_records.size() << ",\n";
         ss << "  \"update_version\": " << update_version << ",\n";
+        ss << "  \"last_underlying_id\": " << last_underlying << ",\n";
         ss << "  \"last_fetch_ms\": " << last_fetch_time_ms << ",\n";
         ss << "  \"last_compute_ms\": " << last_compute_time_ms << ",\n";
         ss << "  \"total_latency_ms\": " << (last_fetch_time_ms + last_compute_time_ms) << ",\n";
@@ -278,11 +280,12 @@ int main(int argc, char* argv[]) {
         return riskdb::HttpResponse::json(ss.str());
     });
 
-    auto handle_traditional_signal = [&cached_records, &compute_traditional](const riskdb::HttpRequest& req) {
+    auto handle_traditional_signal = [&cached_records, &compute_traditional, &last_underlying](const riskdb::HttpRequest& req) {
         uint32_t underlying_id = 1;
         float new_spot_price = 100.0f;
         if (!req.get_param("underlying").empty()) underlying_id = std::stoul(req.get_param("underlying"));
         if (!req.get_param("spot").empty()) new_spot_price = std::stof(req.get_param("spot"));
+        last_underlying = underlying_id;
 
         // Update records in traditional memory
         size_t count = 0;

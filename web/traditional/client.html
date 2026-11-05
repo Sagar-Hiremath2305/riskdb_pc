@@ -93,14 +93,22 @@
                     <h3>Client Option Contracts & Calculated Greeks</h3>
                     <p style="font-size: 0.8rem; color: var(--text-secondary);">Showing Option Prices ($) and Greek metrics (Delta, Gamma, Vega, Theta) calculated by Traditional Stack</p>
                 </div>
-                <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <label style="font-size: 0.8rem; color: #ff3366; display: flex; align-items: center; gap: 4px;">
+                        <input type="checkbox" id="autoFollowTrad" checked> Auto-Follow Broadcast Asset
+                    </label>
                     <select id="tradUnderlyingFilter" class="select-ctrl" style="padding: 4px 8px; font-size: 0.8rem;">
                         <option value="-1">All Underlyings</option>
-                        <option value="1">Underlying #1</option>
-                        <option value="2">Underlying #2</option>
-                        <option value="3">Underlying #3</option>
-                        <option value="4">Underlying #4</option>
-                        <option value="5" selected>Underlying #5</option>
+                        <option value="1">Underlying #1 (S001)</option>
+                        <option value="2">Underlying #2 (S002)</option>
+                        <option value="3">Underlying #3 (S003)</option>
+                        <option value="4">Underlying #4 (S004)</option>
+                        <option value="5" selected>Underlying #5 (S005)</option>
+                        <option value="6">Underlying #6 (S006)</option>
+                        <option value="7">Underlying #7 (S007)</option>
+                        <option value="8">Underlying #8 (S008)</option>
+                        <option value="9">Underlying #9 (S009)</option>
+                        <option value="10">Underlying #10 (S010)</option>
                     </select>
                     <span class="table-count" id="tradContractCount">50 Contracts</span>
                 </div>
@@ -142,7 +150,8 @@
         let lastVersion = 0;
 
         async function fetchTraditionalContracts() {
-            const uid = document.getElementById('tradUnderlyingFilter').value;
+            const filterEl = document.getElementById('tradUnderlyingFilter');
+            let uid = filterEl.value;
             let url = `${API}/api/contracts?limit=50`;
             if (uid >= 0) url += `&underlying=${uid}`;
 
@@ -154,6 +163,13 @@
                 const version = data.update_version || 0;
                 const isNewUpdate = (version > lastVersion && lastVersion !== 0);
                 lastVersion = version;
+
+                // Auto-follow signal: If an underlying asset was updated, switch to it automatically
+                const autoFollow = document.getElementById('autoFollowTrad').checked;
+                if (isNewUpdate && data.last_underlying_id && autoFollow && filterEl.value != data.last_underlying_id) {
+                    filterEl.value = data.last_underlying_id;
+                    return fetchTraditionalContracts();
+                }
 
                 document.getElementById('kpiTradNetDelay').textContent = `${(data.last_fetch_ms || 7680.0).toFixed(1)} ms`;
                 document.getElementById('kpiTradCpuCompute').textContent = `${(data.last_compute_ms || 52.0).toFixed(1)} ms`;

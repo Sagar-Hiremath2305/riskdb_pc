@@ -164,6 +164,7 @@ int main(int argc, char* argv[]) {
 
     static std::atomic<uint64_t> riskdb_update_ver{1};
     static std::atomic<double> riskdb_last_compute_ms{2.1};
+    static std::atomic<uint32_t> riskdb_last_underlying{5};
 
     // Endpoint: Status
     server.route("GET", "/api/status", [&table, thread_count](const riskdb::HttpRequest&) {
@@ -172,6 +173,7 @@ int main(int argc, char* argv[]) {
            << "  \"status\": \"healthy\",\n"
            << "  \"engine\": \"RiskDB Parallel SIMD Engine\",\n"
            << "  \"update_version\": " << riskdb_update_ver.load() << ",\n"
+           << "  \"last_underlying_id\": " << riskdb_last_underlying.load() << ",\n"
            << "  \"last_compute_ms\": " << riskdb_last_compute_ms.load() << ",\n"
            << "  \"simd_architecture\": \""
 #if defined(__AVX2__)
@@ -207,6 +209,7 @@ int main(int argc, char* argv[]) {
         ss << "{\n";
         ss << "  \"total_stored_contracts\": " << table.size() << ",\n";
         ss << "  \"update_version\": " << riskdb_update_ver.load() << ",\n";
+        ss << "  \"last_underlying_id\": " << riskdb_last_underlying.load() << ",\n";
         ss << "  \"last_compute_ms\": " << riskdb_last_compute_ms.load() << ",\n";
         ss << "  \"total_latency_ms\": " << riskdb_last_compute_ms.load() << ",\n";
         ss << "  \"contracts\": [\n";
@@ -337,6 +340,7 @@ int main(int argc, char* argv[]) {
                   << "                 -> Engine Throughput: " << (stats.throughput_rows_per_sec / 1e6) << " M rows/sec\n\n";
 
         riskdb_last_compute_ms.store(total_process_ms);
+        riskdb_last_underlying.store(underlying_id);
         riskdb_update_ver.fetch_add(1);
 
         std::ostringstream ss;
