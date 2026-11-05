@@ -25,6 +25,10 @@ pkill -f "9090:localhost:9090" 2>/dev/null || true
 pkill -f "ServerAliveInterval=10" 2>/dev/null || true
 sleep 1
 
+# Ensure remote ports on Azure VMs are clean and unencumbered
+ssh -o ConnectTimeout=5 vm1 "sudo fuser -k 5432/tcp 2>/dev/null || true" >/dev/null 2>&1 || true
+ssh -o ConnectTimeout=5 vm2 "sudo fuser -k 9090/tcp 2>/dev/null || true" >/dev/null 2>&1 || true
+
 nohup bash -c 'while true; do ssh -N -o ServerAliveInterval=10 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -R 5432:localhost:5432 -L 8081:localhost:8081 vm1 2>/dev/null; sleep 2; done' >/dev/null 2>&1 &
 nohup bash -c 'while true; do ssh -N -o ServerAliveInterval=10 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -R 9090:localhost:9090 -L 8080:localhost:8080 vm2 2>/dev/null; sleep 2; done' >/dev/null 2>&1 &
 sleep 2

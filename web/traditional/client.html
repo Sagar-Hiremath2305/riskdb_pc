@@ -162,14 +162,13 @@
 
                 const version = data.update_version || 0;
                 const isNewUpdate = (version > lastVersion && lastVersion !== 0);
-                lastVersion = version;
-
                 // Auto-follow signal: If an underlying asset was updated, switch to it automatically
                 const autoFollow = document.getElementById('autoFollowTrad').checked;
                 if (isNewUpdate && data.last_underlying_id && autoFollow && filterEl.value != data.last_underlying_id) {
                     filterEl.value = data.last_underlying_id;
                     return fetchTraditionalContracts();
                 }
+                lastVersion = version;
 
                 document.getElementById('kpiTradNetDelay').textContent = `${(data.last_fetch_ms || 7680.0).toFixed(1)} ms`;
                 document.getElementById('kpiTradCpuCompute').textContent = `${(data.last_compute_ms || 52.0).toFixed(1)} ms`;
