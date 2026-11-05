@@ -97,10 +97,10 @@ struct ArchitectureCallResult {
     std::string raw_body;
 };
 
-ArchitectureCallResult execute_service_call(const std::string& host, int port, const std::string& path) {
+ArchitectureCallResult execute_service_call(const std::string& host, int port, const std::string& path, const std::string& method = "GET", const std::string& body = "") {
     ArchitectureCallResult res;
     const auto t0 = Clock::now();
-    std::string raw = send_http_request(host, port, "GET", path);
+    std::string raw = send_http_request(host, port, method, path, body);
     const auto t1 = Clock::now();
     res.roundtrip_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
 
@@ -284,7 +284,7 @@ int main(int argc, char* argv[]) {
     // 3. Proxy /api/signal to RiskDB database on Laptop 4
     auto handle_proxy_signal = [&riskdb_host, &riskdb_port](const riskdb::HttpRequest& req) {
         std::string query = req.query_string.empty() ? "" : ("?" + req.query_string);
-        auto res = execute_service_call(riskdb_host, riskdb_port, "/api/signal" + query);
+        auto res = execute_service_call(riskdb_host, riskdb_port, "/api/signal" + query, req.method, req.body);
         if (res.reachable) {
             return riskdb::HttpResponse::json(res.raw_body);
         }
@@ -309,8 +309,35 @@ int main(int argc, char* argv[]) {
         float spot = 100.0f;
         try {
             if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
+            if (!req.get_param("underlying_id").empty()) uid = std::stoul(req.get_param("underlying_id"));
             if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+            if (!req.get_param("spot_price").empty()) spot = std::stof(req.get_param("spot_price"));
         } catch (...) {}
+        if (!req.body.empty()) {
+            size_t u_pos = req.body.find("\"underlying_id\":");
+            if (u_pos != std::string::npos) {
+                try { uid = std::stoul(req.body.substr(u_pos + 16)); } catch (...) {}
+            } else {
+                size_t u2_pos = req.body.find("\"underlying\":");
+                if (u2_pos != std::string::npos) {
+                    try { uid = std::stoul(req.body.substr(u2_pos + 13)); } catch (...) {}
+                }
+            }
+            size_t s_pos = req.body.find("\"spot_price\":");
+            if (s_pos != std::string::npos) {
+                try { spot = std::stof(req.body.substr(s_pos + 13)); } catch (...) {}
+            } else {
+                size_t s2_pos = req.body.find("\"new_spot\":");
+                if (s2_pos != std::string::npos) {
+                    try { spot = std::stof(req.body.substr(s2_pos + 11)); } catch (...) {}
+                } else {
+                    size_t s3_pos = req.body.find("\"spot\":");
+                    if (s3_pos != std::string::npos) {
+                        try { spot = std::stof(req.body.substr(s3_pos + 7)); } catch (...) {}
+                    }
+                }
+            }
+        }
 
         std::cout << "[DUAL BROADCAST INITIATED] Underlying #" << uid << " New Spot: $" << spot << "\n"
                   << "  -> Launching concurrent requests to RiskDB (" << riskdb_host << ":" << riskdb_port << ") and Traditional (" << trad_host << ":" << trad_port << ")...\n";
@@ -384,8 +411,35 @@ int main(int argc, char* argv[]) {
         float spot = 100.0f;
         try {
             if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
+            if (!req.get_param("underlying_id").empty()) uid = std::stoul(req.get_param("underlying_id"));
             if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+            if (!req.get_param("spot_price").empty()) spot = std::stof(req.get_param("spot_price"));
         } catch (...) {}
+        if (!req.body.empty()) {
+            size_t u_pos = req.body.find("\"underlying_id\":");
+            if (u_pos != std::string::npos) {
+                try { uid = std::stoul(req.body.substr(u_pos + 16)); } catch (...) {}
+            } else {
+                size_t u2_pos = req.body.find("\"underlying\":");
+                if (u2_pos != std::string::npos) {
+                    try { uid = std::stoul(req.body.substr(u2_pos + 13)); } catch (...) {}
+                }
+            }
+            size_t s_pos = req.body.find("\"spot_price\":");
+            if (s_pos != std::string::npos) {
+                try { spot = std::stof(req.body.substr(s_pos + 13)); } catch (...) {}
+            } else {
+                size_t s2_pos = req.body.find("\"new_spot\":");
+                if (s2_pos != std::string::npos) {
+                    try { spot = std::stof(req.body.substr(s2_pos + 11)); } catch (...) {}
+                } else {
+                    size_t s3_pos = req.body.find("\"spot\":");
+                    if (s3_pos != std::string::npos) {
+                        try { spot = std::stof(req.body.substr(s3_pos + 7)); } catch (...) {}
+                    }
+                }
+            }
+        }
 
         std::string risk_path = "/api/signal?underlying=" + std::to_string(uid) + "&spot=" + std::to_string(spot) + "&threads=" + std::to_string(threads);
         auto res = execute_service_call(riskdb_host, riskdb_port, risk_path);
@@ -412,8 +466,35 @@ int main(int argc, char* argv[]) {
         float spot = 100.0f;
         try {
             if (!req.get_param("underlying").empty()) uid = std::stoul(req.get_param("underlying"));
+            if (!req.get_param("underlying_id").empty()) uid = std::stoul(req.get_param("underlying_id"));
             if (!req.get_param("spot").empty()) spot = std::stof(req.get_param("spot"));
+            if (!req.get_param("spot_price").empty()) spot = std::stof(req.get_param("spot_price"));
         } catch (...) {}
+        if (!req.body.empty()) {
+            size_t u_pos = req.body.find("\"underlying_id\":");
+            if (u_pos != std::string::npos) {
+                try { uid = std::stoul(req.body.substr(u_pos + 16)); } catch (...) {}
+            } else {
+                size_t u2_pos = req.body.find("\"underlying\":");
+                if (u2_pos != std::string::npos) {
+                    try { uid = std::stoul(req.body.substr(u2_pos + 13)); } catch (...) {}
+                }
+            }
+            size_t s_pos = req.body.find("\"spot_price\":");
+            if (s_pos != std::string::npos) {
+                try { spot = std::stof(req.body.substr(s_pos + 13)); } catch (...) {}
+            } else {
+                size_t s2_pos = req.body.find("\"new_spot\":");
+                if (s2_pos != std::string::npos) {
+                    try { spot = std::stof(req.body.substr(s2_pos + 11)); } catch (...) {}
+                } else {
+                    size_t s3_pos = req.body.find("\"spot\":");
+                    if (s3_pos != std::string::npos) {
+                        try { spot = std::stof(req.body.substr(s3_pos + 7)); } catch (...) {}
+                    }
+                }
+            }
+        }
 
         std::string trad_path = "/api/signal?underlying=" + std::to_string(uid) + "&spot=" + std::to_string(spot);
         auto res = execute_service_call(trad_host, trad_port, trad_path);

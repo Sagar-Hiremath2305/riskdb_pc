@@ -227,6 +227,7 @@ int main(int argc, char* argv[]) {
         if (!req.get_param("limit").empty()) limit = std::stoull(req.get_param("limit"));
         if (!req.get_param("offset").empty()) offset = std::stoull(req.get_param("offset"));
         if (!req.get_param("underlying").empty()) underlying_filter = std::stoi(req.get_param("underlying"));
+        if (!req.get_param("underlying_id").empty()) underlying_filter = std::stoi(req.get_param("underlying_id"));
         if (!req.get_param("portfolio").empty()) portfolio_filter = std::stoi(req.get_param("portfolio"));
 
         if (limit > 500) limit = 500;
@@ -284,7 +285,35 @@ int main(int argc, char* argv[]) {
         uint32_t underlying_id = 1;
         float new_spot_price = 100.0f;
         if (!req.get_param("underlying").empty()) underlying_id = std::stoul(req.get_param("underlying"));
+        if (!req.get_param("underlying_id").empty()) underlying_id = std::stoul(req.get_param("underlying_id"));
         if (!req.get_param("spot").empty()) new_spot_price = std::stof(req.get_param("spot"));
+        if (!req.get_param("spot_price").empty()) new_spot_price = std::stof(req.get_param("spot_price"));
+
+        if (!req.body.empty()) {
+            size_t u_pos = req.body.find("\"underlying_id\":");
+            if (u_pos != std::string::npos) {
+                try { underlying_id = std::stoul(req.body.substr(u_pos + 16)); } catch (...) {}
+            } else {
+                size_t u2_pos = req.body.find("\"underlying\":");
+                if (u2_pos != std::string::npos) {
+                    try { underlying_id = std::stoul(req.body.substr(u2_pos + 13)); } catch (...) {}
+                }
+            }
+            size_t s_pos = req.body.find("\"spot_price\":");
+            if (s_pos != std::string::npos) {
+                try { new_spot_price = std::stof(req.body.substr(s_pos + 13)); } catch (...) {}
+            } else {
+                size_t s2_pos = req.body.find("\"new_spot\":");
+                if (s2_pos != std::string::npos) {
+                    try { new_spot_price = std::stof(req.body.substr(s2_pos + 11)); } catch (...) {}
+                } else {
+                    size_t s3_pos = req.body.find("\"spot\":");
+                    if (s3_pos != std::string::npos) {
+                        try { new_spot_price = std::stof(req.body.substr(s3_pos + 7)); } catch (...) {}
+                    }
+                }
+            }
+        }
         last_underlying = underlying_id;
 
         // Update records in traditional memory
