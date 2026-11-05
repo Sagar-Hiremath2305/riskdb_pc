@@ -205,6 +205,23 @@
             box.scrollTop = box.scrollHeight;
         }
 
+        function notifyClientsImmediately(uid, spot, computeMs) {
+            try {
+                const payload = {
+                    type: 'RISKDB_SIGNAL_BROADCAST',
+                    underlying_id: parseInt(uid),
+                    spot_price: parseFloat(spot),
+                    timestamp: Date.now(),
+                    compute_ms: computeMs
+                };
+                if (window.BroadcastChannel) {
+                    const bc = new BroadcastChannel('riskdb_live_channel');
+                    bc.postMessage(payload);
+                }
+                localStorage.setItem('riskdb_latest_signal', JSON.stringify(payload));
+            } catch (_) {}
+        }
+
         async function broadcastSignals() {
             const btn = document.getElementById('broadcastBtn');
             const uid = document.getElementById('underlyingSelect').value;
@@ -261,6 +278,7 @@
                 document.getElementById('riskdbThroughput').textContent = `${rThroughput.toFixed(1)} M/s`;
                 document.getElementById('riskdbStatus').textContent = `Completed in ${riskRoundtrip.toFixed(1)} ms`;
                 log(`RiskDB In-Engine finished in ${riskRoundtrip.toFixed(2)} ms (Vector compute: ${rComputeMs.toFixed(2)} ms)`);
+                notifyClientsImmediately(uid, spot, rComputeMs);
 
                 // Update Traditional metrics
                 const tBody = t.raw_response || {};
@@ -318,6 +336,7 @@
                     document.getElementById('riskdbThroughput').textContent = `${throughput.toFixed(1)} M/s`;
                     document.getElementById('riskdbStatus').textContent = `Completed in ${roundtrip.toFixed(1)} ms`;
                     log(`RiskDB processed signal in ${roundtrip.toFixed(2)} ms (Vector compute: ${computeMs.toFixed(2)} ms)`);
+                    notifyClientsImmediately(uid, spot, computeMs);
                 } catch (e) {
                     document.getElementById('riskdbStatus').textContent = `Failed: ${e.message}`;
                     log(`RiskDB dispatch error: ${e.message}`);

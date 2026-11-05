@@ -53,7 +53,7 @@
             <div class="kpi-card">
                 <span class="kpi-label">TOTAL PROCESS LATENCY</span>
                 <span class="kpi-value" id="kpiRiskTotalLatency" style="color: var(--accent-cyan); font-size: 1.8rem;">-- ms</span>
-                <span class="kpi-sub">Signal RTT + 2.1 ms In-Engine Compute</span>
+                <span class="kpi-sub">In-Engine Total SIMD Latency</span>
             </div>
             <div class="kpi-card">
                 <span class="kpi-label">UPDATE VERSION</span>
@@ -73,12 +73,12 @@
                 <div>
                     <h3 style="color: var(--accent-cyan);">RiskDB Zero-Copy In-Engine Architecture</h3>
                     <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
-                        Data resides in cache-aligned columnar memory inside the database. When a stock price changes, only a 32-byte control signal is sent over the network. All option prices and Greeks are computed and updated in-engine in 2.1 ms.
+                        Data resides in cache-aligned columnar memory inside the database. When a stock price changes, only a 32-byte control signal is sent over the network. All option prices and Greeks are computed and updated in-engine in real-time.
                     </p>
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: center;">
                     <label style="font-size: 0.8rem; color: var(--text-secondary);">
-                        <input type="checkbox" id="autoSyncRisk" checked> Auto-Sync (500ms Poll)
+                        <input type="checkbox" id="autoSyncRisk" checked> Auto-Sync (150ms Real-Time Poll)
                     </label>
                     <button id="refreshRiskBtn" class="btn" style="background: #1e2638; border: 1px solid var(--card-border); color: #fff; padding: 8px 14px; border-radius: 4px; cursor: pointer;">
                         Manual Refresh
@@ -202,8 +202,12 @@
     <script>
         const API = window.location.origin;
         let lastVersion = 0;
+        let isFetching = false;
 
-        async function fetchRiskDBContracts() {
+        async function fetchRiskDBContracts(forceHighlight = false) {
+            if (isFetching) return;
+            isFetching = true;
+
             const filterEl = document.getElementById('riskUnderlyingFilter');
             let uid = filterEl.value;
             let url = `${API}/api/contracts?limit=50`;
@@ -216,8 +220,9 @@
                     if (pill) {
                         pill.style.borderColor = '#ff3366';
                         pill.style.color = '#ff3366';
-                        document.getElementById('riskClientStatusText').textContent = 'Connecting to Database Tunnel...';
+                        document.getElementById('riskClientStatusText').textContent = 'Connecting to Database...';
                     }
+                    isFetching = false;
                     return;
                 }
                 const pill = document.getElementById('riskClientStatusPill');
@@ -229,20 +234,21 @@
 
                 const data = await res.json();
                 const version = data.update_version || 0;
-                const isNewUpdate = (version > lastVersion && lastVersion !== 0);
+                let isNewUpdate = forceHighlight || (version > lastVersion && lastVersion !== 0);
 
                 // Auto-follow signal: If an underlying asset was updated, switch to it automatically
                 const autoFollow = document.getElementById('autoFollowRisk').checked;
-                if (isNewUpdate && data.last_underlying_id && autoFollow && filterEl.value != data.last_underlying_id) {
+                if ((isNewUpdate || forceHighlight) && data.last_underlying_id && autoFollow && filterEl.value != data.last_underlying_id) {
                     filterEl.value = data.last_underlying_id;
-                    // Do not advance lastVersion yet so the follow-up fetch renders with highlight-green
-                    return fetchRiskDBContracts();
+                    isFetching = false;
+                    return fetchRiskDBContracts(true);
                 }
                 lastVersion = version;
 
                 const computeMs = data.last_compute_ms || 2.1;
+                const totalLatency = data.total_latency_ms || computeMs;
                 document.getElementById('kpiRiskSimdCompute').textContent = `${computeMs.toFixed(2)} ms`;
-                document.getElementById('kpiRiskTotalLatency').textContent = `${(computeMs + 30.0).toFixed(1)} ms`;
+                document.getElementById('kpiRiskTotalLatency').textContent = `${totalLatency.toFixed(2)} ms`;
                 document.getElementById('kpiRiskVersion').textContent = `#${version}`;
                 document.getElementById('kpiRiskTotalContracts').textContent = (data.total_stored_contracts || 1000000).toLocaleString();
 
@@ -273,6 +279,8 @@
                 });
             } catch (err) {
                 console.error("Fetch error:", err);
+            } finally {
+                isFetching = false;
             }
         }
 
@@ -339,19 +347,49 @@
             document.getElementById('weakScalingSection').style.display = 'block';
         });
 
-        document.getElementById('refreshRiskBtn').addEventListener('click', fetchRiskDBContracts);
-        document.getElementById('riskUnderlyingFilter').addEventListener('change', fetchRiskDBContracts);
+        // Real-Time Cross-Tab / Cross-Window BroadcastChannel (< 0.5 ms latency)
+        if (window.BroadcastChannel) {
+            try {
+                const bc = new BroadcastChannel('riskdb_live_channel');
+                bc.onmessage = (ev) => {
+                    if (ev.data && ev.data.type === 'RISKDB_SIGNAL_BROADCAST') {
+                        const autoFollow = document.getElementById('autoFollowRisk').checked;
+                        if (autoFollow && ev.data.underlying_id) {
+                            document.getElementById('riskUnderlyingFilter').value = ev.data.underlying_id;
+                        }
+                        fetchRiskDBContracts(true);
+                    }
+                };
+            } catch (_) {}
+        }
+
+        // Cross-Window Storage Event Sync
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'riskdb_latest_signal' && e.newValue) {
+                try {
+                    const data = JSON.parse(e.newValue);
+                    const autoFollow = document.getElementById('autoFollowRisk').checked;
+                    if (autoFollow && data.underlying_id) {
+                        document.getElementById('riskUnderlyingFilter').value = data.underlying_id;
+                    }
+                    fetchRiskDBContracts(true);
+                } catch (_) {}
+            }
+        });
+
+        document.getElementById('refreshRiskBtn').addEventListener('click', () => fetchRiskDBContracts(true));
+        document.getElementById('riskUnderlyingFilter').addEventListener('change', () => fetchRiskDBContracts(false));
         document.getElementById('runBenchBtn').addEventListener('click', runScalingBenchmarks);
 
-        // Auto-sync polling every 500ms
+        // High-Frequency Auto-Sync Polling every 150ms
         setInterval(() => {
             if (document.getElementById('autoSyncRisk').checked) {
-                fetchRiskDBContracts();
+                fetchRiskDBContracts(false);
             }
-        }, 500);
+        }, 150);
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetchRiskDBContracts();
+            fetchRiskDBContracts(false);
         });
     </script>
 </body>
