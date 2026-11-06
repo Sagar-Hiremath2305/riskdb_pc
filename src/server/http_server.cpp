@@ -251,6 +251,9 @@ void HttpServer::handle_client(int client_sock) {
     response_stream << "HTTP/1.1 " << res.status_code << " " << res.status_text << "\r\n";
     response_stream << "Content-Type: " << res.content_type << "\r\n";
     response_stream << "Content-Length: " << res.body.size() << "\r\n";
+    response_stream << "Cache-Control: no-cache, no-store, must-revalidate, max-age=0\r\n";
+    response_stream << "Pragma: no-cache\r\n";
+    response_stream << "Expires: 0\r\n";
     response_stream << "Access-Control-Allow-Origin: *\r\n";
     response_stream << "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n";
     response_stream << "Access-Control-Allow-Headers: Content-Type, Authorization\r\n";

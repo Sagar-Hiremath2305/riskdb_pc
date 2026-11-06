@@ -3,86 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traditional Database Architecture - Client Options & Greeks Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Traditional Architecture - Client Options & Greeks Dashboard</title>
+    <link rel="stylesheet" href="../style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .trad-header { border-bottom: 2px solid #ff3366; }
-        .trad-badge { background: rgba(255, 51, 102, 0.2); color: #ff3366; border: 1px solid #ff3366; }
-        .kpi-card.warn { border-color: #ff3366; }
-        .highlight-row { animation: flashRed 1.2s ease-out; }
+        .trad-header { border-bottom: 2px solid var(--accent-red); }
+        .trad-badge { background: rgba(255, 51, 102, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
+        .highlight-row { animation: flashRed 1.8s ease-out; }
         @keyframes flashRed {
-            0% { background-color: rgba(255, 51, 102, 0.4); }
+            0% { background-color: rgba(255, 51, 102, 0.4); box-shadow: inset 0 0 12px rgba(255, 51, 102, 0.6); }
+            50% { background-color: rgba(255, 51, 102, 0.2); }
             100% { background-color: transparent; }
+        }
+        .banner-glow-trad { animation: bannerPulseTrad 1.5s ease-out; }
+        @keyframes bannerPulseTrad {
+            0% { border-color: var(--accent-red); background: rgba(255, 51, 102, 0.22); }
+            100% { border-color: var(--accent-red); background: rgba(255, 51, 102, 0.08); }
         }
     </style>
 </head>
 <body>
     <header class="app-header trad-header">
         <div class="header-left">
-            <div class="logo-icon" style="background: linear-gradient(135deg, #ff3366, #ff9900); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">T</div>
+            <div class="logo-icon" style="background: linear-gradient(135deg, var(--accent-red), #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">T</div>
             <div>
                 <h1>Traditional Client Dashboard <span class="badge-tag trad-badge">LAPTOP C CLIENT</span></h1>
-                <p class="subtitle">Live Option Prices & Greek Exposures Calculated via PostgreSQL WAN Tuple Streaming</p>
+                <p class="subtitle">Row-Oriented DBMS Stack Client (Receives Stored Data Over Remote WAN)</p>
             </div>
         </div>
         <div class="header-right">
             <div class="status-pill" id="tradClientStatusPill" style="border-color: #ff3366; color: #ff3366; background: rgba(255, 51, 102, 0.1);">
                 <span class="status-dot" style="background: #ff3366;"></span>
-                <span id="tradClientStatusText">Connected (Port 8081)</span>
+                <span id="tradClientStatusText">Traditional Stack Active (Port 8081)</span>
             </div>
-            <div class="simd-pill" style="border-color: #5a6878; color: #8c9ba5;">Scalar Iteration Loop</div>
+            <div class="simd-pill" style="border-color: #ffaa00; color: #ffaa00; background: rgba(255, 170, 0, 0.1);">Scalar Application CPU Loop</div>
         </div>
     </header>
 
     <main class="dashboard-container">
         <!-- Latency Metrics Strip -->
         <section class="kpi-grid">
-            <div class="kpi-card warn">
-                <span class="kpi-label">NETWORK FETCH DELAY</span>
-                <span class="kpi-value" id="kpiTradNetDelay" style="color: #ff3366;">-- ms</span>
-                <span class="kpi-sub">TCP/IP WAN Tuple Serialization (~48 MB)</span>
+            <div class="kpi-card">
+                <span class="kpi-label">REMOTE WAN FETCH DELAY</span>
+                <span class="kpi-value" id="kpiTradNetDelay" style="color: var(--accent-red); font-size: 1.8rem;">~9,800 ms</span>
+                <span class="kpi-sub">48MB TCP/IP Streaming Bottleneck</span>
             </div>
-            <div class="kpi-card warn">
+            <div class="kpi-card">
                 <span class="kpi-label">SCALAR CPU COMPUTE</span>
-                <span class="kpi-value" id="kpiTradCpuCompute" style="color: #ffaa00;">-- ms</span>
-                <span class="kpi-sub">Row-by-Row Iterator Loop</span>
+                <span class="kpi-value" id="kpiTradCpuCompute" style="color: #ffaa00;">~52 ms</span>
+                <span class="kpi-sub">Sequential Single-Thread Loop</span>
             </div>
-            <div class="kpi-card warn">
+            <div class="kpi-card">
                 <span class="kpi-label">TOTAL PROCESS LATENCY</span>
-                <span class="kpi-value" id="kpiTradTotalLatency" style="color: #ff3366; font-size: 1.8rem;">-- ms</span>
-                <span class="kpi-sub">Severe WAN Transfer Delay</span>
+                <span class="kpi-value" id="kpiTradTotalLatency" style="color: var(--accent-red); font-size: 1.8rem;">~9,850 ms</span>
+                <span class="kpi-sub">Network Serialization + Scalar Loop</span>
             </div>
             <div class="kpi-card">
                 <span class="kpi-label">UPDATE VERSION</span>
-                <span class="kpi-value" id="kpiTradVersion" style="color: var(--accent-cyan);">#0</span>
-                <span class="kpi-sub">Auto-sync with System Application</span>
+                <span class="kpi-value" id="kpiTradVersion" style="color: #ffaa00;">#0</span>
+                <span class="kpi-sub">Delayed Synchronization via WAN</span>
             </div>
             <div class="kpi-card">
-                <span class="kpi-label">MONITORED CONTRACTS</span>
+                <span class="kpi-label">RETRIEVED CONTRACTS</span>
                 <span class="kpi-value" id="kpiTradTotalContracts">1,000,000</span>
-                <span class="kpi-sub">PostgreSQL Relational Table</span>
+                <span class="kpi-sub">Row-by-Row Tuple Tuples Deserialized</span>
             </div>
         </section>
 
-        <!-- Bottleneck Notice -->
-        <section class="controls-card" style="border-left: 4px solid #ff3366; background: rgba(255, 51, 102, 0.04);">
+        <!-- Traditional Architecture Bottleneck Notice -->
+        <section class="controls-card" style="border-left: 4px solid var(--accent-red); background: rgba(255, 51, 102, 0.04); margin-bottom: 1.25rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                    <h3 style="color: #ff3366;">Traditional Architecture Client View</h3>
+                    <h3 style="color: var(--accent-red);">Traditional Tiered Architecture Limitations</h3>
                     <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
-                        Whenever the System Application dispatches a stock price change, this client must wait for all 1,000,000 contract rows (~48 MB) to stream across the WAN socket from the database before recalculating option prices and Greeks.
+                        When a stock price changes, the traditional architecture must query and stream all 1,000,000 option records (~48 MB) across the TCP/IP socket before application logic can calculate Greeks.
                     </p>
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: center;">
                     <label style="font-size: 0.8rem; color: var(--text-secondary);">
-                        <input type="checkbox" id="autoSyncTrad" checked> Auto-Sync (1s Poll)
+                        <input type="checkbox" id="autoSyncTrad" checked> Auto-Sync (500ms Poll)
                     </label>
                     <button id="refreshTradBtn" class="btn" style="background: #1e2638; border: 1px solid var(--card-border); color: #fff; padding: 8px 14px; border-radius: 4px; cursor: pointer;">
                         Manual Refresh
                     </button>
                 </div>
+            </div>
+        </section>
+
+        <!-- Live Market Broadcast Status Banner -->
+        <section id="tradBroadcastBanner" style="display: flex; align-items: center; justify-content: space-between; background: rgba(255, 51, 102, 0.08); border: 1px solid var(--accent-red); border-radius: 8px; padding: 12px 18px; margin-bottom: 1.5rem; font-family: var(--font-mono); font-size: 0.88rem; flex-wrap: wrap; gap: 0.75rem; transition: background 0.3s, border-color 0.3s;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span class="status-dot" style="background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); width: 10px; height: 10px;"></span>
+                <span style="color: var(--text-secondary); letter-spacing: 0.5px;">ACTIVE BROADCAST ASSET:</span>
+                <strong style="color: #fff; font-size: 1.05rem;" id="tradBannerAssetTag">Underlying #5 (S005)</strong>
+                <span style="color: var(--text-secondary);">| Spot:</span>
+                <strong style="color: #ffaa00; font-size: 1.15rem;" id="tradBannerSpotTag">$125.50</strong>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <div>WAN Delay: <strong style="color: var(--accent-red);" id="tradBannerNetTag">~9,800 ms</strong></div>
+                <div>Update: <strong style="color: #ffaa00;" id="tradBannerVersionTag">#0</strong></div>
+                <div id="tradBannerModePill" style="padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; background: rgba(255, 51, 102, 0.2); border: 1px solid var(--accent-red); color: var(--accent-red);">AUTO-FOLLOWING</div>
             </div>
         </section>
 
@@ -94,16 +118,15 @@
                     <p style="font-size: 0.8rem; color: var(--text-secondary);">Showing Option Prices ($) and Greek metrics (Delta, Gamma, Vega, Theta) calculated by Traditional Stack</p>
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                    <label style="font-size: 0.8rem; color: #ff3366; display: flex; align-items: center; gap: 4px;">
-                        <input type="checkbox" id="autoFollowTrad" checked> Auto-Follow Broadcast Asset
-                    </label>
-                    <select id="tradUnderlyingFilter" class="select-ctrl" style="padding: 4px 8px; font-size: 0.8rem;">
-                        <option value="-1">All Underlyings</option>
+                    <label for="tradUnderlyingFilter" style="font-size: 0.8rem; color: var(--text-secondary);">Asset Filter:</label>
+                    <select id="tradUnderlyingFilter" class="select-ctrl" style="padding: 6px 12px; font-size: 0.85rem; font-weight: 600; min-width: 260px;">
+                        <option value="auto" selected>Auto-Follow Broadcast Asset (Live)</option>
+                        <option value="-1">All Underlyings (Aggregated)</option>
                         <option value="1">Underlying #1 (S001)</option>
                         <option value="2">Underlying #2 (S002)</option>
                         <option value="3">Underlying #3 (S003)</option>
                         <option value="4">Underlying #4 (S004)</option>
-                        <option value="5" selected>Underlying #5 (S005)</option>
+                        <option value="5">Underlying #5 (S005)</option>
                         <option value="6">Underlying #6 (S006)</option>
                         <option value="7">Underlying #7 (S007)</option>
                         <option value="8">Underlying #8 (S008)</option>
@@ -148,12 +171,55 @@
     <script>
         const API = window.location.origin;
         let lastVersion = 0;
+        let lastRenderedKey = "";
+        let isFetching = false;
+        let flashUntil = 0;
 
-        async function fetchTraditionalContracts() {
+        function renderContractsTable(contracts, highlight) {
+            const tbody = document.getElementById('tradContractsBody');
+            tbody.innerHTML = '';
+            document.getElementById('tradContractCount').textContent = `${contracts.length} Contracts`;
+
+            if (contracts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" class="text-center">No contracts matching selected asset filter.</td></tr>';
+                return;
+            }
+
+            contracts.forEach(c => {
+                const tr = document.createElement('tr');
+                if (highlight) tr.classList.add('highlight-row');
+                tr.innerHTML = `
+                    <td><strong>#${c.contract_id}</strong></td>
+                    <td><strong style="color:var(--accent-red);">#${c.underlying_id}</strong></td>
+                    <td>Port ${c.portfolio_id}</td>
+                    <td><span class="badge-tag" style="border-color:${c.option_type === 'CALL' ? '#00f0ff' : '#ff3366'}; color:${c.option_type === 'CALL' ? '#00f0ff' : '#ff3366'}">${c.option_type}</span></td>
+                    <td style="color:#ffaa00; font-weight:600;">$${c.spot_price.toFixed(2)}</td>
+                    <td>$${c.strike_price.toFixed(2)}</td>
+                    <td>${c.time_to_expiry.toFixed(2)}</td>
+                    <td>${(c.volatility * 100).toFixed(0)}%</td>
+                    <td style="color:#ffaa00; font-weight:700;">$${c.option_price.toFixed(2)}</td>
+                    <td style="font-family:var(--font-mono);">${c.delta.toFixed(4)}</td>
+                    <td style="font-family:var(--font-mono);">${c.gamma.toFixed(4)}</td>
+                    <td style="font-family:var(--font-mono);">${c.vega.toFixed(4)}</td>
+                    <td style="font-family:var(--font-mono);">${c.theta.toFixed(4)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function fetchTraditionalContracts(forceHighlight = false) {
+            if (isFetching) return;
+            isFetching = true;
+
             const filterEl = document.getElementById('tradUnderlyingFilter');
-            let uid = filterEl.value;
-            let url = `${API}/api/contracts?limit=50`;
-            if (uid >= 0) url += `&underlying=${uid}`;
+            let sel = filterEl.value; // 'auto', '-1', or '1'..'10'
+
+            let url = `${API}/api/contracts?limit=50&_t=${Date.now()}`;
+            if (sel === 'auto') {
+                url += '&auto_follow=1';
+            } else if (sel >= 0) {
+                url += `&underlying=${sel}`;
+            }
 
             try {
                 const res = await fetch(url);
@@ -161,62 +227,90 @@
                 const data = await res.json();
 
                 const version = data.update_version || 0;
-                const isNewUpdate = (version > lastVersion && lastVersion !== 0);
-                // Auto-follow signal: If an underlying asset was updated, switch to it automatically
-                const autoFollow = document.getElementById('autoFollowTrad').checked;
-                if (isNewUpdate && data.last_underlying_id && autoFollow && filterEl.value != data.last_underlying_id) {
-                    filterEl.value = data.last_underlying_id;
-                    return fetchTraditionalContracts();
-                }
-                lastVersion = version;
+                const activeUnderlying = data.last_underlying_id || 5;
+                const activeSpot = data.last_spot_price || (data.contracts && data.contracts[0] ? data.contracts[0].spot_price : 125.50);
+                const fetchMs = data.last_fetch_ms || 9800.0;
+                const computeMs = data.last_compute_ms || 52.0;
+                const totalLatency = data.total_latency_ms || (fetchMs + computeMs);
 
-                document.getElementById('kpiTradNetDelay').textContent = `${(data.last_fetch_ms || 7680.0).toFixed(1)} ms`;
-                document.getElementById('kpiTradCpuCompute').textContent = `${(data.last_compute_ms || 52.0).toFixed(1)} ms`;
-                document.getElementById('kpiTradTotalLatency').textContent = `${(data.total_latency_ms || 7732.0).toFixed(1)} ms`;
+                // Update Broadcast Status Banner
+                const assetTicker = `S00${activeUnderlying}`.slice(-4);
+                document.getElementById('tradBannerAssetTag').textContent = `Underlying #${activeUnderlying} (${assetTicker})`;
+                document.getElementById('tradBannerSpotTag').textContent = `$${parseFloat(activeSpot).toFixed(2)}`;
+                document.getElementById('tradBannerNetTag').textContent = `${fetchMs.toFixed(1)} ms`;
+                document.getElementById('tradBannerVersionTag').textContent = `#${version}`;
+
+                // Update Mode Pill
+                const modePill = document.getElementById('tradBannerModePill');
+                if (sel === 'auto') {
+                    modePill.textContent = `AUTO-FOLLOWING (#${activeUnderlying})`;
+                    modePill.style.background = 'rgba(255, 51, 102, 0.2)';
+                    modePill.style.borderColor = 'var(--accent-red)';
+                    modePill.style.color = 'var(--accent-red)';
+                } else if (sel == activeUnderlying) {
+                    modePill.textContent = `PINNED (#${sel}) - ACTIVE MATCH`;
+                    modePill.style.background = 'rgba(255, 170, 0, 0.2)';
+                    modePill.style.borderColor = '#ffaa00';
+                    modePill.style.color = '#ffaa00';
+                } else {
+                    modePill.innerHTML = `PINNED (#${sel}) | <a href="#" id="switchBannerLinkTrad" style="color:var(--accent-red); text-decoration:underline;">Switch to #${activeUnderlying}</a>`;
+                    const switchLink = document.getElementById('switchBannerLinkTrad');
+                    if (switchLink) {
+                        switchLink.onclick = (e) => {
+                            e.preventDefault();
+                            filterEl.value = 'auto';
+                            fetchTraditionalContracts(true);
+                        };
+                    }
+                }
+
+                // Update KPIs
+                document.getElementById('kpiTradNetDelay').textContent = `${fetchMs.toFixed(1)} ms`;
+                document.getElementById('kpiTradCpuCompute').textContent = `${computeMs.toFixed(1)} ms`;
+                document.getElementById('kpiTradTotalLatency').textContent = `${totalLatency.toFixed(1)} ms`;
                 document.getElementById('kpiTradVersion').textContent = `#${version}`;
                 document.getElementById('kpiTradTotalContracts').textContent = (data.total_stored_contracts || 1000000).toLocaleString();
 
-                const tbody = document.getElementById('tradContractsBody');
-                tbody.innerHTML = '';
-                const contracts = data.contracts || [];
-                document.getElementById('tradContractCount').textContent = `${contracts.length} Contracts`;
+                const isVersionBump = (version > lastVersion && lastVersion !== 0);
+                if (isVersionBump || forceHighlight) {
+                    flashUntil = Date.now() + 1800;
+                    const banner = document.getElementById('tradBroadcastBanner');
+                    if (banner) {
+                        banner.classList.remove('banner-glow-trad');
+                        void banner.offsetWidth;
+                        banner.classList.add('banner-glow-trad');
+                    }
+                }
 
-                contracts.forEach(c => {
-                    const tr = document.createElement('tr');
-                    if (isNewUpdate) tr.classList.add('highlight-row');
-                    tr.innerHTML = `
-                        <td><strong>#${c.contract_id}</strong></td>
-                        <td>#${c.underlying_id}</td>
-                        <td>Port ${c.portfolio_id}</td>
-                        <td><span class="badge-tag" style="border-color:${c.option_type === 'CALL' ? '#00f0ff' : '#ff3366'}; color:${c.option_type === 'CALL' ? '#00f0ff' : '#ff3366'}">${c.option_type}</span></td>
-                        <td>$${c.spot_price.toFixed(2)}</td>
-                        <td>$${c.strike_price.toFixed(2)}</td>
-                        <td>${c.time_to_expiry.toFixed(2)}</td>
-                        <td>${(c.volatility * 100).toFixed(0)}%</td>
-                        <td style="color:#ffaa00; font-weight:700;">$${c.option_price.toFixed(2)}</td>
-                        <td style="font-family:var(--font-mono);">${c.delta.toFixed(4)}</td>
-                        <td style="font-family:var(--font-mono);">${c.gamma.toFixed(4)}</td>
-                        <td style="font-family:var(--font-mono);">${c.vega.toFixed(4)}</td>
-                        <td style="font-family:var(--font-mono);">${c.theta.toFixed(4)}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                const contracts = data.contracts || [];
+                const currentRenderKey = `${version}_${sel}_${contracts.length}`;
+
+                if (currentRenderKey !== lastRenderedKey || forceHighlight) {
+                    renderContractsTable(contracts, Date.now() < flashUntil);
+                    lastRenderedKey = currentRenderKey;
+                }
+
+                lastVersion = version;
             } catch (err) {
                 console.error("Fetch error:", err);
+            } finally {
+                isFetching = false;
             }
         }
 
-        document.getElementById('refreshTradBtn').addEventListener('click', fetchTraditionalContracts);
-        document.getElementById('tradUnderlyingFilter').addEventListener('change', fetchTraditionalContracts);
+        document.getElementById('refreshTradBtn').addEventListener('click', () => fetchTraditionalContracts(true));
+        document.getElementById('tradUnderlyingFilter').addEventListener('change', () => fetchTraditionalContracts(true));
 
-        // Auto-sync polling every 500ms (will only advance once Traditional DBMS finishes WAN serialization)
+        // Auto-sync polling every 500ms
         setInterval(() => {
             if (document.getElementById('autoSyncTrad').checked) {
-                fetchTraditionalContracts();
+                fetchTraditionalContracts(false);
             }
         }, 500);
 
-        document.addEventListener('DOMContentLoaded', fetchTraditionalContracts);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTraditionalContracts(true);
+        });
     </script>
 </body>
 </html>

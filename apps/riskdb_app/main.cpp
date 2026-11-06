@@ -165,6 +165,7 @@ int main(int argc, char* argv[]) {
     static std::atomic<uint64_t> riskdb_update_ver{1};
     static std::atomic<double> riskdb_last_compute_ms{2.1};
     static std::atomic<uint32_t> riskdb_last_underlying{5};
+    static std::atomic<float> riskdb_last_spot{125.50f};
 
     // Endpoint: Status
     server.route("GET", "/api/status", [&table, thread_count](const riskdb::HttpRequest&) {
@@ -174,6 +175,7 @@ int main(int argc, char* argv[]) {
            << "  \"engine\": \"RiskDB Parallel SIMD Engine\",\n"
            << "  \"update_version\": " << riskdb_update_ver.load() << ",\n"
            << "  \"last_underlying_id\": " << riskdb_last_underlying.load() << ",\n"
+           << "  \"last_spot_price\": " << riskdb_last_spot.load() << ",\n"
            << "  \"last_compute_ms\": " << riskdb_last_compute_ms.load() << ",\n"
            << "  \"simd_architecture\": \""
 #if defined(__AVX2__)
@@ -199,8 +201,25 @@ int main(int argc, char* argv[]) {
 
         if (!req.get_param("limit").empty()) limit = std::stoull(req.get_param("limit"));
         if (!req.get_param("offset").empty()) offset = std::stoull(req.get_param("offset"));
-        if (!req.get_param("underlying").empty()) underlying_filter = std::stoi(req.get_param("underlying"));
-        if (!req.get_param("underlying_id").empty()) underlying_filter = std::stoi(req.get_param("underlying_id"));
+        if (!req.get_param("underlying").empty()) {
+            std::string u_val = req.get_param("underlying");
+            if (u_val == "auto" || u_val == "latest") {
+                underlying_filter = static_cast<int>(riskdb_last_underlying.load());
+            } else {
+                try { underlying_filter = std::stoi(u_val); } catch (...) {}
+            }
+        }
+        if (!req.get_param("underlying_id").empty()) {
+            std::string u_val = req.get_param("underlying_id");
+            if (u_val == "auto" || u_val == "latest") {
+                underlying_filter = static_cast<int>(riskdb_last_underlying.load());
+            } else {
+                try { underlying_filter = std::stoi(u_val); } catch (...) {}
+            }
+        }
+        if (!req.get_param("auto_follow").empty() && req.get_param("auto_follow") != "0" && req.get_param("auto_follow") != "false") {
+            underlying_filter = static_cast<int>(riskdb_last_underlying.load());
+        }
         if (!req.get_param("portfolio").empty()) portfolio_filter = std::stoi(req.get_param("portfolio"));
 
         if (limit > 500) limit = 500;
@@ -211,6 +230,8 @@ int main(int argc, char* argv[]) {
         ss << "  \"total_stored_contracts\": " << table.size() << ",\n";
         ss << "  \"update_version\": " << riskdb_update_ver.load() << ",\n";
         ss << "  \"last_underlying_id\": " << riskdb_last_underlying.load() << ",\n";
+        ss << "  \"last_spot_price\": " << riskdb_last_spot.load() << ",\n";
+        ss << "  \"filtered_underlying_id\": " << underlying_filter << ",\n";
         ss << "  \"last_compute_ms\": " << riskdb_last_compute_ms.load() << ",\n";
         ss << "  \"total_latency_ms\": " << riskdb_last_compute_ms.load() << ",\n";
         ss << "  \"contracts\": [\n";
@@ -363,6 +384,7 @@ int main(int argc, char* argv[]) {
 
         riskdb_last_compute_ms.store(total_process_ms);
         riskdb_last_underlying.store(underlying_id);
+        riskdb_last_spot.store(new_spot_price);
         riskdb_update_ver.fetch_add(1);
 
         std::ostringstream ss;

@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>RiskDB Architecture - Client Options & Greeks Dashboard</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,10 +13,16 @@
     <style>
         .risk-header { border-bottom: 2px solid var(--accent-cyan); }
         .risk-badge { background: rgba(0, 240, 255, 0.15); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
-        .highlight-green { animation: flashCyan 1.0s ease-out; }
-        @keyframes flashCyan {
-            0% { background-color: rgba(0, 240, 255, 0.4); }
+        .highlight-green { animation: flashPulse 1.8s ease-out; }
+        @keyframes flashPulse {
+            0% { background-color: rgba(0, 240, 255, 0.45); box-shadow: inset 0 0 12px rgba(0, 240, 255, 0.6); }
+            50% { background-color: rgba(0, 240, 255, 0.2); }
             100% { background-color: transparent; }
+        }
+        .banner-glow { animation: bannerPulse 1.5s ease-out; }
+        @keyframes bannerPulse {
+            0% { border-color: var(--accent-green); background: rgba(0, 255, 136, 0.22); }
+            100% { border-color: var(--accent-cyan); background: rgba(0, 240, 255, 0.08); }
         }
         .tab-btn { background: #111622; border: 1px solid var(--card-border); color: var(--text-secondary); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; }
         .tab-btn.active { background: rgba(0, 240, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); }
@@ -68,7 +77,7 @@
         </section>
 
         <!-- Zero-Copy Database Notice -->
-        <section class="controls-card" style="border-left: 4px solid var(--accent-cyan); background: rgba(0, 240, 255, 0.04);">
+        <section class="controls-card" style="border-left: 4px solid var(--accent-cyan); background: rgba(0, 240, 255, 0.04); margin-bottom: 1.25rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <h3 style="color: var(--accent-cyan);">RiskDB Zero-Copy In-Engine Architecture</h3>
@@ -87,6 +96,22 @@
             </div>
         </section>
 
+        <!-- Live Market Broadcast Status Banner -->
+        <section id="riskBroadcastBanner" style="display: flex; align-items: center; justify-content: space-between; background: rgba(0, 240, 255, 0.08); border: 1px solid var(--accent-cyan); border-radius: 8px; padding: 12px 18px; margin-bottom: 1.5rem; font-family: var(--font-mono); font-size: 0.88rem; flex-wrap: wrap; gap: 0.75rem; transition: background 0.3s, border-color 0.3s;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span class="status-dot" style="background: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan); width: 10px; height: 10px;"></span>
+                <span style="color: var(--text-secondary); letter-spacing: 0.5px;">ACTIVE BROADCAST ASSET:</span>
+                <strong style="color: #fff; font-size: 1.05rem;" id="bannerAssetTag">Underlying #5 (S005)</strong>
+                <span style="color: var(--text-secondary);">| Spot:</span>
+                <strong style="color: var(--accent-green); font-size: 1.15rem;" id="bannerSpotTag">$125.50</strong>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <div>In-Engine Compute: <strong style="color: var(--accent-green);" id="bannerComputeTag">-- ms</strong></div>
+                <div>Update: <strong style="color: var(--accent-cyan);" id="bannerVersionTag">#0</strong></div>
+                <div id="bannerModePill" style="padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; background: rgba(0, 240, 255, 0.2); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);">AUTO-FOLLOWING</div>
+            </div>
+        </section>
+
         <!-- Client Options & Greeks Table -->
         <section class="table-card">
             <div class="table-header-controls">
@@ -95,16 +120,15 @@
                     <p style="font-size: 0.8rem; color: var(--text-secondary);">Option Prices ($) and Greeks (Delta, Gamma, Vega, Theta) stored and maintained directly in database memory</p>
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                    <label style="font-size: 0.8rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 4px;">
-                        <input type="checkbox" id="autoFollowRisk" checked> Auto-Follow Broadcast Asset
-                    </label>
-                    <select id="riskUnderlyingFilter" class="select-ctrl" style="padding: 4px 8px; font-size: 0.8rem;">
-                        <option value="-1">All Underlyings</option>
+                    <label for="riskUnderlyingFilter" style="font-size: 0.8rem; color: var(--text-secondary);">Asset Filter:</label>
+                    <select id="riskUnderlyingFilter" class="select-ctrl" style="padding: 6px 12px; font-size: 0.85rem; font-weight: 600; min-width: 260px;">
+                        <option value="auto" selected>Auto-Follow Broadcast Asset (Live)</option>
+                        <option value="-1">All Underlyings (Aggregated)</option>
                         <option value="1">Underlying #1 (S001)</option>
                         <option value="2">Underlying #2 (S002)</option>
                         <option value="3">Underlying #3 (S003)</option>
                         <option value="4">Underlying #4 (S004)</option>
-                        <option value="5" selected>Underlying #5 (S005)</option>
+                        <option value="5">Underlying #5 (S005)</option>
                         <option value="6">Underlying #6 (S006)</option>
                         <option value="7">Underlying #7 (S007)</option>
                         <option value="8">Underlying #8 (S008)</option>
@@ -202,16 +226,56 @@
     <script>
         const API = window.location.origin;
         let lastVersion = 0;
+        let lastRenderedKey = "";
         let isFetching = false;
+        let flashUntil = 0;
+
+        function renderContractsTable(contracts, highlight) {
+            const tbody = document.getElementById('riskContractsBody');
+            tbody.innerHTML = '';
+            document.getElementById('riskContractCount').textContent = `${contracts.length} Contracts`;
+
+            if (contracts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" class="text-center">No contracts matching selected asset filter.</td></tr>';
+                return;
+            }
+
+            contracts.forEach(c => {
+                const tr = document.createElement('tr');
+                if (highlight) tr.classList.add('highlight-green');
+                tr.innerHTML = `
+                    <td><strong>#${c.contract_id}</strong></td>
+                    <td><strong style="color:var(--accent-cyan);">#${c.underlying_id}</strong></td>
+                    <td>Port ${c.portfolio_id}</td>
+                    <td><span class="badge-tag" style="border-color:${c.option_type === 'CALL' ? '#00f0ff' : '#ff3366'}; color:${c.option_type === 'CALL' ? '#00f0ff' : '#ff3366'}">${c.option_type}</span></td>
+                    <td style="color:var(--accent-green); font-weight:600;">$${c.spot_price.toFixed(2)}</td>
+                    <td>$${c.strike_price.toFixed(2)}</td>
+                    <td>${c.time_to_expiry.toFixed(2)}</td>
+                    <td>${(c.volatility * 100).toFixed(0)}%</td>
+                    <td style="color:var(--accent-green); font-weight:700;">$${c.option_price.toFixed(2)}</td>
+                    <td style="font-family:var(--font-mono);">${c.delta.toFixed(4)}</td>
+                    <td style="font-family:var(--font-mono);">${c.gamma.toFixed(4)}</td>
+                    <td style="font-family:var(--font-mono);">${c.vega.toFixed(4)}</td>
+                    <td style="font-family:var(--font-mono);">${c.theta.toFixed(4)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
         async function fetchRiskDBContracts(forceHighlight = false) {
             if (isFetching) return;
             isFetching = true;
 
             const filterEl = document.getElementById('riskUnderlyingFilter');
-            let uid = filterEl.value;
-            let url = `${API}/api/contracts?limit=50`;
-            if (uid >= 0) url += `&underlying=${uid}`;
+            let sel = filterEl.value; // 'auto', '-1', or '1'..'10'
+
+            // Cache-busting timestamp prevents intermediate caching on secondary laptops
+            let url = `${API}/api/contracts?limit=50&_t=${Date.now()}`;
+            if (sel === 'auto') {
+                url += '&auto_follow=1';
+            } else if (sel >= 0) {
+                url += `&underlying=${sel}`;
+            }
 
             try {
                 const res = await fetch(url);
@@ -222,7 +286,6 @@
                         pill.style.color = '#ff3366';
                         document.getElementById('riskClientStatusText').textContent = 'Connecting to Database...';
                     }
-                    isFetching = false;
                     return;
                 }
                 const pill = document.getElementById('riskClientStatusPill');
@@ -234,49 +297,69 @@
 
                 const data = await res.json();
                 const version = data.update_version || 0;
-                let isNewUpdate = forceHighlight || (version > lastVersion && lastVersion !== 0);
-
-                // Auto-follow signal: If an underlying asset was updated, switch to it automatically
-                const autoFollow = document.getElementById('autoFollowRisk').checked;
-                if ((isNewUpdate || forceHighlight) && data.last_underlying_id && autoFollow && filterEl.value != data.last_underlying_id) {
-                    filterEl.value = data.last_underlying_id;
-                    isFetching = false;
-                    return fetchRiskDBContracts(true);
-                }
-                lastVersion = version;
-
+                const activeUnderlying = data.last_underlying_id || 5;
+                const activeSpot = data.last_spot_price || (data.contracts && data.contracts[0] ? data.contracts[0].spot_price : 125.50);
                 const computeMs = data.last_compute_ms || 2.1;
                 const totalLatency = data.total_latency_ms || computeMs;
+
+                // Update Broadcast Status Banner
+                const assetTicker = `S00${activeUnderlying}`.slice(-4);
+                document.getElementById('bannerAssetTag').textContent = `Underlying #${activeUnderlying} (${assetTicker})`;
+                document.getElementById('bannerSpotTag').textContent = `$${parseFloat(activeSpot).toFixed(2)}`;
+                document.getElementById('bannerComputeTag').textContent = `${computeMs.toFixed(2)} ms`;
+                document.getElementById('bannerVersionTag').textContent = `#${version}`;
+
+                // Update Mode Pill
+                const modePill = document.getElementById('bannerModePill');
+                if (sel === 'auto') {
+                    modePill.textContent = `AUTO-FOLLOWING (#${activeUnderlying})`;
+                    modePill.style.background = 'rgba(0, 240, 255, 0.2)';
+                    modePill.style.borderColor = 'var(--accent-cyan)';
+                    modePill.style.color = 'var(--accent-cyan)';
+                } else if (sel == activeUnderlying) {
+                    modePill.textContent = `PINNED (#${sel}) - ACTIVE MATCH`;
+                    modePill.style.background = 'rgba(0, 255, 136, 0.2)';
+                    modePill.style.borderColor = 'var(--accent-green)';
+                    modePill.style.color = 'var(--accent-green)';
+                } else {
+                    modePill.innerHTML = `PINNED (#${sel}) | <a href="#" id="switchBannerLink" style="color:var(--accent-cyan); text-decoration:underline;">Switch to #${activeUnderlying}</a>`;
+                    const switchLink = document.getElementById('switchBannerLink');
+                    if (switchLink) {
+                        switchLink.onclick = (e) => {
+                            e.preventDefault();
+                            filterEl.value = 'auto';
+                            fetchRiskDBContracts(true);
+                        };
+                    }
+                }
+
+                // Update Latency / Version KPIs
                 document.getElementById('kpiRiskSimdCompute').textContent = `${computeMs.toFixed(2)} ms`;
                 document.getElementById('kpiRiskTotalLatency').textContent = `${totalLatency.toFixed(2)} ms`;
                 document.getElementById('kpiRiskVersion').textContent = `#${version}`;
                 document.getElementById('kpiRiskTotalContracts').textContent = (data.total_stored_contracts || 1000000).toLocaleString();
 
-                const tbody = document.getElementById('riskContractsBody');
-                tbody.innerHTML = '';
-                const contracts = data.contracts || [];
-                document.getElementById('riskContractCount').textContent = `${contracts.length} Contracts`;
+                const isVersionBump = (version > lastVersion && lastVersion !== 0);
+                if (isVersionBump || forceHighlight) {
+                    flashUntil = Date.now() + 1800; // Flash for 1.8 seconds
+                    const banner = document.getElementById('riskBroadcastBanner');
+                    if (banner) {
+                        banner.classList.remove('banner-glow');
+                        void banner.offsetWidth; // re-trigger animation
+                        banner.classList.add('banner-glow');
+                    }
+                }
 
-                contracts.forEach(c => {
-                    const tr = document.createElement('tr');
-                    if (isNewUpdate) tr.classList.add('highlight-green');
-                    tr.innerHTML = `
-                        <td><strong>#${c.contract_id}</strong></td>
-                        <td>#${c.underlying_id}</td>
-                        <td>Port ${c.portfolio_id}</td>
-                        <td><span class="badge-tag" style="border-color:${c.option_type === 'CALL' ? '#00f0ff' : '#ff3366'}; color:${c.option_type === 'CALL' ? '#00f0ff' : '#ff3366'}">${c.option_type}</span></td>
-                        <td>$${c.spot_price.toFixed(2)}</td>
-                        <td>$${c.strike_price.toFixed(2)}</td>
-                        <td>${c.time_to_expiry.toFixed(2)}</td>
-                        <td>${(c.volatility * 100).toFixed(0)}%</td>
-                        <td style="color:var(--accent-green); font-weight:700;">$${c.option_price.toFixed(2)}</td>
-                        <td style="font-family:var(--font-mono);">${c.delta.toFixed(4)}</td>
-                        <td style="font-family:var(--font-mono);">${c.gamma.toFixed(4)}</td>
-                        <td style="font-family:var(--font-mono);">${c.vega.toFixed(4)}</td>
-                        <td style="font-family:var(--font-mono);">${c.theta.toFixed(4)}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                const contracts = data.contracts || [];
+                const currentRenderKey = `${version}_${sel}_${contracts.length}`;
+
+                // Re-render when version changes, filter changes, or forced
+                if (currentRenderKey !== lastRenderedKey || forceHighlight) {
+                    renderContractsTable(contracts, Date.now() < flashUntil);
+                    lastRenderedKey = currentRenderKey;
+                }
+
+                lastVersion = version;
             } catch (err) {
                 console.error("Fetch error:", err);
             } finally {
@@ -290,7 +373,7 @@
             btn.textContent = 'Running Benchmarks...';
 
             try {
-                const res = await fetch(`${API}/api/benchmark?threads=8`);
+                const res = await fetch(`${API}/api/benchmark?threads=8&_t=${Date.now()}`);
                 if (res.ok) {
                     const data = await res.json();
                     
@@ -353,10 +436,6 @@
                 const bc = new BroadcastChannel('riskdb_live_channel');
                 bc.onmessage = (ev) => {
                     if (ev.data && ev.data.type === 'RISKDB_SIGNAL_BROADCAST') {
-                        const autoFollow = document.getElementById('autoFollowRisk').checked;
-                        if (autoFollow && ev.data.underlying_id) {
-                            document.getElementById('riskUnderlyingFilter').value = ev.data.underlying_id;
-                        }
                         fetchRiskDBContracts(true);
                     }
                 };
@@ -366,19 +445,12 @@
         // Cross-Window Storage Event Sync
         window.addEventListener('storage', (e) => {
             if (e.key === 'riskdb_latest_signal' && e.newValue) {
-                try {
-                    const data = JSON.parse(e.newValue);
-                    const autoFollow = document.getElementById('autoFollowRisk').checked;
-                    if (autoFollow && data.underlying_id) {
-                        document.getElementById('riskUnderlyingFilter').value = data.underlying_id;
-                    }
-                    fetchRiskDBContracts(true);
-                } catch (_) {}
+                fetchRiskDBContracts(true);
             }
         });
 
         document.getElementById('refreshRiskBtn').addEventListener('click', () => fetchRiskDBContracts(true));
-        document.getElementById('riskUnderlyingFilter').addEventListener('change', () => fetchRiskDBContracts(false));
+        document.getElementById('riskUnderlyingFilter').addEventListener('change', () => fetchRiskDBContracts(true));
         document.getElementById('runBenchBtn').addEventListener('click', runScalingBenchmarks);
 
         // High-Frequency Auto-Sync Polling every 150ms
@@ -389,7 +461,7 @@
         }, 150);
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetchRiskDBContracts(false);
+            fetchRiskDBContracts(true);
         });
     </script>
 </body>
