@@ -281,6 +281,40 @@ int main(int argc, char* argv[]) {
         return riskdb::HttpResponse::json("{\"status\":\"error\",\"contracts\":[],\"message\":\"Unable to reach RiskDB Database on Laptop 4 via tunnel\"}", 502);
     });
 
+    // 2b. Proxy Traditional routes to VM 1 (port 8081)
+    auto handle_traditional_contracts = [&trad_host, &trad_port](const riskdb::HttpRequest& req) {
+        std::string query = req.query_string.empty() ? "" : ("?" + req.query_string);
+        auto res = execute_service_call(trad_host, trad_port, "/api/contracts" + query);
+        if (res.reachable) {
+            return riskdb::HttpResponse::json(res.raw_body);
+        }
+        return riskdb::HttpResponse::json("{\"status\":\"error\",\"contracts\":[],\"message\":\"Unable to reach Traditional Service on VM 1\"}", 502);
+    };
+    server.route("GET", "/api/traditional/contracts", handle_traditional_contracts);
+    server.route("GET", "/traditional/api/contracts", handle_traditional_contracts);
+
+    auto handle_traditional_status = [&trad_host, &trad_port](const riskdb::HttpRequest& req) {
+        std::string query = req.query_string.empty() ? "" : ("?" + req.query_string);
+        auto res = execute_service_call(trad_host, trad_port, "/api/status" + query);
+        if (res.reachable) {
+            return riskdb::HttpResponse::json(res.raw_body);
+        }
+        return riskdb::HttpResponse::json("{\"status\":\"error\",\"message\":\"Unable to reach Traditional Service on VM 1\"}", 502);
+    };
+    server.route("GET", "/api/traditional/status", handle_traditional_status);
+    server.route("GET", "/traditional/api/status", handle_traditional_status);
+
+    auto handle_traditional_risk = [&trad_host, &trad_port](const riskdb::HttpRequest& req) {
+        std::string query = req.query_string.empty() ? "" : ("?" + req.query_string);
+        auto res = execute_service_call(trad_host, trad_port, "/api/risk" + query);
+        if (res.reachable) {
+            return riskdb::HttpResponse::json(res.raw_body);
+        }
+        return riskdb::HttpResponse::json("{\"status\":\"error\",\"message\":\"Unable to reach Traditional Service on VM 1\"}", 502);
+    };
+    server.route("GET", "/api/traditional/risk", handle_traditional_risk);
+    server.route("GET", "/traditional/api/risk", handle_traditional_risk);
+
     // 3. Proxy /api/signal to RiskDB database on Laptop 4
     auto handle_proxy_signal = [&riskdb_host, &riskdb_port](const riskdb::HttpRequest& req) {
         std::string query = req.query_string.empty() ? "" : ("?" + req.query_string);

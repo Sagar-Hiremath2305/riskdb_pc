@@ -151,6 +151,8 @@
 
     <script>
         const API = window.location.origin;
+        const isProxied = window.location.pathname.includes('/traditional');
+        const apiPrefix = isProxied ? '/api/traditional' : '/api';
 
         document.getElementById('tradRunBtn').addEventListener('click', () => {
             fetchTraditional();
@@ -164,7 +166,7 @@
             btn.innerHTML = 'Streaming 48 MB over WAN & Computing...';
 
             try {
-                const res = await fetch(`${API}/api/signal?underlying=${uid}&spot=${spot}`);
+                const res = await fetch(`${API}${apiPrefix}/signal?underlying=${uid}&spot=${spot}`);
                 if (res.ok) {
                     await fetchTraditional();
                 }
@@ -182,7 +184,7 @@
             btn.innerHTML = 'Fetching & Computing...';
 
             try {
-                const res = await fetch(`${API}/api/risk`);
+                const res = await fetch(`${API}${apiPrefix}/risk`);
                 if (res.ok) {
                     const data = await res.json();
                     const s = data.stats || {};
